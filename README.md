@@ -4,10 +4,13 @@ Platforma do zarządzania wydarzeniami z możliwością rejestracji uczestników
 
 ## 🚀 Stack Technologiczny
 
-- **Backend**: Laravel 11
-- **Frontend**: Vue 3 (Composition API) + Inertia.js
-- **Styling**: TailwindCSS
-- **Autentykacja**: Laravel Breeze (Inertia + Vue)
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Frontend**: Vue 3 (Composition API) + Inertia 2 + TypeScript
+- **Styling**: Tailwind CSS 4
+- **Komponenty UI**: shadcn-vue
+- **Autentykacja**: Laravel Starter Kit (Vue) – Fortify pod spodem
+- **Baza danych**: MySQL/PostgreSQL
+- **Kolejki**: Laravel Queue
 
 ## 📋 Funkcjonalności
 
@@ -32,13 +35,19 @@ Platforma do zarządzania wydarzeniami z możliwością rejestracji uczestników
 
 ## 📦 Instalacja
 
+Aplikacja zakładana jest przez oficjalny Laravel installer z starter kit **Vue** (Inertia 2, TypeScript, shadcn-vue):
+
 ```bash
-composer install
-npm install
+# W katalogu nadrzędnym – tworzenie projektu z wyborem Vue
+laravel new event_platform
+
+# W katalogu projektu
+cd event_platform
+npm install && npm run build
 cp .env.example .env
 php artisan key:generate
 php artisan migrate
-npm run dev
+composer run dev
 ```
 
 ## 🌿 Branching Strategy
