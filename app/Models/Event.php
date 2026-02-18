@@ -65,4 +65,9 @@ class Event extends Model
     {
         return $this->ticket_price === null || (float) $this->ticket_price === 0.0;
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
 }
