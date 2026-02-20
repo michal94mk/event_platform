@@ -33,39 +33,25 @@ defineProps<{
     <Head title="Wydarzenia" />
 
     <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] dark:border-[#3E3E3A] px-4 py-3">
+        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
             <nav class="mx-auto flex max-w-4xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC] hover:underline">
-                    Event Platform
-                </Link>
+                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
                 <div class="flex flex-wrap items-center gap-4">
-                    <Link :href="route('events.index')" class="text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:underline">
-                        Wydarzenia
-                    </Link>
+                    <Link :href="route('events.index')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Wydarzenia </Link>
                     <template v-if="canCreate">
                         <Link
                             v-if="!showingMine"
                             :href="route('events.index', { mine: 1 })"
-                            class="text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:underline"
+                            class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"
                         >
                             Moje wydarzenia
                         </Link>
-                        <Link
-                            v-else
-                            :href="route('events.index')"
-                            class="text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:underline"
-                        >
+                        <Link v-else :href="route('events.index')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
                             Wszystkie wydarzenia
                         </Link>
-                        <Link :href="route('events.create')" class="text-sm font-medium text-primary hover:underline">
-                            Dodaj wydarzenie
-                        </Link>
+                        <Link :href="route('events.create')" class="text-sm font-medium text-primary hover:underline"> Dodaj wydarzenie </Link>
                     </template>
-                    <Link
-                        v-if="$page.props.auth?.user"
-                        :href="route('dashboard')"
-                        class="text-sm text-[#1b1b18] dark:text-[#EDEDEC] hover:underline"
-                    >
+                    <Link v-if="$page.props.auth?.user" :href="route('dashboard')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
                         Dashboard
                     </Link>
                     <template v-else>
@@ -81,11 +67,18 @@ defineProps<{
                 {{ showingMine ? 'Moje wydarzenia' : 'Wydarzenia' }}
             </h1>
 
-            <div v-if="events.length === 0" class="rounded-xl border border-sidebar-border/70 bg-white p-8 text-center dark:border-[#3E3E3A] dark:bg-[#161615]">
+            <div
+                v-if="events.length === 0"
+                class="rounded-xl border border-sidebar-border/70 bg-white p-8 text-center dark:border-[#3E3E3A] dark:bg-[#161615]"
+            >
                 <p class="text-[#706f6c] dark:text-[#A1A09A]">
                     {{ showingMine ? 'Nie masz jeszcze żadnych wydarzeń.' : 'Nie ma jeszcze opublikowanych wydarzeń.' }}
                 </p>
-                <Link v-if="canCreate && showingMine" :href="route('events.create')" class="mt-4 inline-block text-sm font-medium text-primary hover:underline">
+                <Link
+                    v-if="canCreate && showingMine"
+                    :href="route('events.create')"
+                    class="mt-4 inline-block text-sm font-medium text-primary hover:underline"
+                >
                     Dodaj pierwsze wydarzenie →
                 </Link>
             </div>
@@ -97,21 +90,19 @@ defineProps<{
                     class="rounded-xl border border-[#19140035] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615]"
                 >
                     <Link :href="route('events.show', event.slug)" class="block">
-                        <h2 class="font-medium text-[#1b1b18] dark:text-[#EDEDEC] hover:underline">
+                        <h2 class="font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
                             {{ event.title }}
                         </h2>
-                    <p class="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                        {{ event.venue_name }}<template v-if="event.venue_city">, {{ event.venue_city }}</template>
-                    </p>
-                    <p class="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                        {{ new Date(event.start_date).toLocaleDateString('pl-PL') }}
-                    </p>
-                    <p v-if="event.ticket_price && Number(event.ticket_price) > 0" class="mt-1 text-sm font-medium">
-                        {{ event.ticket_price }} {{ event.currency ?? 'PLN' }}
-                    </p>
-                    <p v-else class="mt-1 text-sm text-green-600 dark:text-green-400">
-                        Wstęp wolny
-                    </p>
+                        <p class="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                            {{ event.venue_name }}<template v-if="event.venue_city">, {{ event.venue_city }}</template>
+                        </p>
+                        <p class="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                            {{ new Date(event.start_date).toLocaleDateString('pl-PL') }}
+                        </p>
+                        <p v-if="event.ticket_price && Number(event.ticket_price) > 0" class="mt-1 text-sm font-medium">
+                            {{ event.ticket_price }} {{ event.currency ?? 'PLN' }}
+                        </p>
+                        <p v-else class="mt-1 text-sm text-green-600 dark:text-green-400">Wstęp wolny</p>
                     </Link>
                 </li>
             </ul>

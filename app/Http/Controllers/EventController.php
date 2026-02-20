@@ -56,7 +56,7 @@ class EventController extends Controller
         $original = $slug;
         $i = 1;
         while (Event::where('slug', $slug)->exists()) {
-            $slug = $original . '-' . $i++;
+            $slug = $original.'-'.$i++;
         }
 
         $event = Event::create([

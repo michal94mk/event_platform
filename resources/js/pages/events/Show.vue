@@ -39,11 +39,9 @@ defineProps<{
     <Head :title="event.title" />
 
     <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] dark:border-[#3E3E3A] px-4 py-3">
+        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
             <nav class="mx-auto flex max-w-4xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC] hover:underline">
-                    Event Platform
-                </Link>
+                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
                 <div class="flex gap-4">
                     <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
                     <Link v-if="$page.props.auth?.user" :href="route('dashboard')" class="text-sm hover:underline">Dashboard</Link>
@@ -66,9 +64,7 @@ defineProps<{
                             {{ event.status }}
                         </span>
                         <CardTitle class="text-2xl">{{ event.title }}</CardTitle>
-                        <p v-if="event.user" class="mt-1 text-sm text-muted-foreground">
-                            Organizator: {{ event.user.name }}
-                        </p>
+                        <p v-if="event.user" class="mt-1 text-sm text-muted-foreground">Organizator: {{ event.user.name }}</p>
                     </div>
                     <div v-if="canUpdate || canDelete" class="flex gap-2">
                         <Link v-if="canUpdate" :href="route('events.edit', event.slug)">
@@ -78,7 +74,11 @@ defineProps<{
                             v-if="canDelete"
                             type="button"
                             class="inline-flex h-9 items-center justify-center rounded-md bg-destructive px-4 text-sm font-medium text-destructive-foreground hover:bg-destructive/90"
-                            @click="if (confirm('Czy na pewno usunąć to wydarzenie?')) { router.delete(route('events.destroy', event.slug)); }"
+                            @click="
+                                if (confirm('Czy na pewno usunąć to wydarzenie?')) {
+                                    router.delete(route('events.destroy', event.slug));
+                                }
+                            "
                         >
                             Usuń
                         </button>
@@ -86,11 +86,7 @@ defineProps<{
                 </CardHeader>
                 <CardContent class="space-y-4">
                     <div v-if="event.categories?.length" class="flex flex-wrap gap-2">
-                        <span
-                            v-for="c in event.categories"
-                            :key="c.id"
-                            class="rounded-md bg-muted px-2 py-1 text-xs"
-                        >
+                        <span v-for="c in event.categories" :key="c.id" class="rounded-md bg-muted px-2 py-1 text-xs">
                             {{ c.name }}
                         </span>
                     </div>

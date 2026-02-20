@@ -79,11 +79,9 @@ const toggleCategory = (id: number) => {
     <Head :title="'Edycja: ' + event.title" />
 
     <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] dark:border-[#3E3E3A] px-4 py-3">
+        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
             <nav class="mx-auto flex max-w-4xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC] hover:underline">
-                    Event Platform
-                </Link>
+                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
                 <div class="flex gap-4">
                     <Link :href="route('events.show', event.slug)" class="text-sm hover:underline">Szczegóły</Link>
                     <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
@@ -156,15 +154,8 @@ const toggleCategory = (id: number) => {
                         <div class="grid gap-2">
                             <Label>Kategorie</Label>
                             <div class="flex flex-wrap gap-3">
-                                <label
-                                    v-for="cat in categories"
-                                    :key="cat.id"
-                                    class="flex cursor-pointer items-center gap-2"
-                                >
-                                    <Checkbox
-                                        :checked="form.category_ids.includes(cat.id)"
-                                        @update:checked="toggleCategory(cat.id)"
-                                    />
+                                <label v-for="cat in categories" :key="cat.id" class="flex cursor-pointer items-center gap-2">
+                                    <Checkbox :checked="form.category_ids.includes(cat.id)" @update:checked="toggleCategory(cat.id)" />
                                     <span class="text-sm">{{ cat.name }}</span>
                                 </label>
                             </div>
@@ -178,7 +169,14 @@ const toggleCategory = (id: number) => {
                             </div>
                             <div class="grid gap-2">
                                 <Label for="ticket_price">Cena biletu (PLN)</Label>
-                                <Input id="ticket_price" v-model="form.ticket_price" type="number" min="0" step="0.01" placeholder="0 = wstęp wolny" />
+                                <Input
+                                    id="ticket_price"
+                                    v-model="form.ticket_price"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    placeholder="0 = wstęp wolny"
+                                />
                                 <InputError :message="form.errors.ticket_price" />
                             </div>
                         </div>
