@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { LoaderCircle } from 'lucide-vue-next';
 
 interface Category {
     id: number;
@@ -28,11 +32,26 @@ interface Event {
     categories?: Category[];
 }
 
-defineProps<{
+const props = defineProps<{
     event: Event;
     canUpdate: boolean;
     canDelete: boolean;
+    canRegister: boolean;
+    placesLeft: number | null;
+    isOrganizer: boolean;
 }>();
+
+const form = useForm({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: '',
+    ticket_quantity: 1,
+});
+
+const submitRegister = () => {
+    form.post(route('events.register', props.event.slug));
+};
 </script>
 
 <template>
@@ -126,7 +145,50 @@ defineProps<{
                         </div>
                     </dl>
 
-                    <div class="pt-4">
+                    <div v-if="canRegister" class="rounded-lg border bg-muted/30 p-4">
+                        <h3 class="mb-3 font-medium">Zapisz się na wydarzenie</h3>
+                        <form @submit.prevent="submitRegister" class="flex flex-col gap-3">
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="grid gap-1">
+                                    <Label for="first_name">Imię *</Label>
+                                    <Input id="first_name" v-model="form.first_name" required />
+                                    <InputError :message="form.errors.first_name" />
+                                </div>
+                                <div class="grid gap-1">
+                                    <Label for="last_name">Nazwisko *</Label>
+                                    <Input id="last_name" v-model="form.last_name" required />
+                                    <InputError :message="form.errors.last_name" />
+                                </div>
+                            </div>
+                            <div class="grid gap-1">
+                                <Label for="email">E-mail *</Label>
+                                <Input id="email" v-model="form.email" type="email" required />
+                                <InputError :message="form.errors.email" />
+                            </div>
+                            <div class="grid gap-1">
+                                <Label for="phone">Telefon</Label>
+                                <Input id="phone" v-model="form.phone" type="tel" />
+                            </div>
+                            <div class="grid gap-1">
+                                <Label for="ticket_quantity">Liczba biletów *</Label>
+                                <Input id="ticket_quantity" v-model.number="form.ticket_quantity" type="number" min="1" :max="placesLeft ?? 10" />
+                                <InputError :message="form.errors.ticket_quantity" />
+                                <p v-if="placesLeft !== null" class="text-xs text-muted-foreground">Pozostało miejsc: {{ placesLeft }}</p>
+                            </div>
+                            <Button type="submit" :disabled="form.processing">
+                                <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
+                                Zapisz się
+                            </Button>
+                        </form>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 pt-4">
+                        <Link v-if="isOrganizer" :href="route('events.check-in.page', event.slug)">
+                            <Button variant="secondary" size="sm">Check-in uczestników</Button>
+                        </Link>
+                        <Link v-if="$page.props.auth?.user" :href="route('registrations.index')">
+                            <Button variant="outline" size="sm">Moje rejestracje</Button>
+                        </Link>
                         <Link :href="route('events.index')">
                             <Button variant="outline">← Powrót do listy</Button>
                         </Link>

@@ -51,6 +51,7 @@ defineProps<{
                         </Link>
                         <Link :href="route('events.create')" class="text-sm font-medium text-primary hover:underline"> Dodaj wydarzenie </Link>
                     </template>
+                    <Link v-if="$page.props.auth?.user" :href="route('registrations.index')" class="text-sm hover:underline"> Moje rejestracje </Link>
                     <Link v-if="$page.props.auth?.user" :href="route('dashboard')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
                         Dashboard
                     </Link>

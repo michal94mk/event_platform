@@ -92,10 +92,19 @@ class EventController extends Controller
 
         $event->load('user:id,name', 'categories');
 
+        $registrationsCount = $event->registrations()->count();
+        $placesLeft = $event->max_attendees ? max(0, $event->max_attendees - $registrationsCount) : null;
+        $canRegister = $event->status === 'published'
+            && ($placesLeft === null || $placesLeft > 0)
+            && $event->start_date->isFuture();
+
         return Inertia::render('events/Show', [
             'event' => $event,
             'canUpdate' => $request->user() && $request->user()->can('update', $event),
             'canDelete' => $request->user() && $request->user()->can('delete', $event),
+            'canRegister' => $canRegister,
+            'placesLeft' => $placesLeft,
+            'isOrganizer' => $request->user() && ($event->user_id === $request->user()->id || $request->user()->isAdmin()),
         ]);
     }
 
