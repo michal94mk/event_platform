@@ -29,6 +29,7 @@ class StoreEventRequest extends FormRequest
             'currency' => ['nullable', 'string', 'size:3'],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['integer', 'exists:event_categories,id'],
+            'cover_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
     }
 }

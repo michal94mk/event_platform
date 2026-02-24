@@ -37,6 +37,7 @@ class UpdateEventRequest extends FormRequest
             'status' => ['nullable', Rule::in(['draft', 'published', 'cancelled', 'completed'])],
             'category_ids' => ['nullable', 'array'],
             'category_ids.*' => ['integer', 'exists:event_categories,id'],
+            'cover_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
         ];
     }
 }

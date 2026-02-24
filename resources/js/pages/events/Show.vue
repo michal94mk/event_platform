@@ -28,6 +28,7 @@ interface Event {
     currency: string;
     status: string;
     max_attendees: number | null;
+    cover_image_url?: string | null;
     user?: { id: number; name: string };
     categories?: Category[];
 }
@@ -74,6 +75,12 @@ const submitRegister = () => {
 
         <main class="mx-auto max-w-2xl px-4 py-8">
             <Card>
+                <img
+                    v-if="event.cover_image_url"
+                    :src="event.cover_image_url"
+                    :alt="event.title"
+                    class="h-48 w-full rounded-t-lg object-cover"
+                />
                 <CardHeader class="flex flex-row items-start justify-between gap-4">
                     <div>
                         <span

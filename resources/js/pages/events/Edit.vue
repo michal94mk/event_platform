@@ -31,6 +31,7 @@ interface Event {
     ticket_price: string | null;
     currency: string;
     status: string;
+    cover_image_url: string | null;
     categories?: { id: number }[];
 }
 
@@ -55,6 +56,7 @@ const form = useForm({
     currency: props.event.currency || 'PLN',
     status: props.event.status,
     category_ids: (props.event.categories ?? []).map((c) => c.id),
+    cover_image: null as File | null,
 });
 
 const submit = () => {
@@ -62,7 +64,9 @@ const submit = () => {
         ...data,
         max_attendees: data.max_attendees === '' ? null : Number(data.max_attendees),
         ticket_price: data.ticket_price === '' ? null : Number(data.ticket_price),
-    })).put(route('events.update', props.event.slug));
+    })).put(route('events.update', props.event.slug), {
+        forceFormData: true,
+    });
 };
 
 const toggleCategory = (id: number) => {
@@ -114,6 +118,25 @@ const toggleCategory = (id: number) => {
                                 placeholder="Opis wydarzenia"
                             />
                             <InputError :message="form.errors.description" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label>Zdjęcie okładki</Label>
+                            <img
+                                v-if="event.cover_image_url"
+                                :src="event.cover_image_url"
+                                alt="Okładka"
+                                class="h-40 w-full rounded-md border object-cover"
+                            />
+                            <input
+                                id="cover_image"
+                                type="file"
+                                accept="image/jpeg,image/png,image/jpg,image/webp"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                                @change="form.cover_image = ($event.target as HTMLInputElement).files?.[0] ?? null"
+                            />
+                            <p class="text-xs text-muted-foreground">{{ event.cover_image_url ? 'Wybierz nowe zdjęcie, aby zastąpić' : 'JPEG, PNG, WebP, max 2 MB' }}</p>
+                            <InputError :message="form.errors.cover_image" />
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">

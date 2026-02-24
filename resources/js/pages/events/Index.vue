@@ -18,6 +18,7 @@ interface Event {
     ticket_price: string | null;
     currency?: string;
     status: string;
+    cover_image_url?: string | null;
     user?: { id: number; name: string };
     categories?: EventCategory[];
 }
@@ -88,9 +89,16 @@ defineProps<{
                 <li
                     v-for="event in events"
                     :key="event.id"
-                    class="rounded-xl border border-[#19140035] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615]"
+                    class="overflow-hidden rounded-xl border border-[#19140035] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]"
                 >
                     <Link :href="route('events.show', event.slug)" class="block">
+                        <img
+                            v-if="event.cover_image_url"
+                            :src="event.cover_image_url"
+                            :alt="event.title"
+                            class="h-36 w-full object-cover"
+                        />
+                        <div class="p-4">
                         <h2 class="font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
                             {{ event.title }}
                         </h2>
@@ -104,6 +112,7 @@ defineProps<{
                             {{ event.ticket_price }} {{ event.currency ?? 'PLN' }}
                         </p>
                         <p v-else class="mt-1 text-sm text-green-600 dark:text-green-400">Wstęp wolny</p>
+                        </div>
                     </Link>
                 </li>
             </ul>

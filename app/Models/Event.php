@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Event extends Model
 {
     use HasFactory;
+
+    protected $appends = ['cover_image_url'];
 
     protected $fillable = [
         'user_id',
@@ -69,5 +73,12 @@ class Event extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    protected function coverImageUrl(): Attribute
+    {
+        return Attribute::get(fn () => $this->cover_image
+            ? Storage::disk('public')->url($this->cover_image)
+            : null);
     }
 }

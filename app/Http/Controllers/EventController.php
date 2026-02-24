@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\EventCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -82,6 +83,11 @@ class EventController extends Controller
             $event->categories()->sync($request->category_ids);
         }
 
+        if ($request->hasFile('cover_image')) {
+            $path = $request->file('cover_image')->store('event-covers', 'public');
+            $event->update(['cover_image' => $path]);
+        }
+
         return redirect()->route('events.show', $event->slug)
             ->with('success', 'Wydarzenie zostało utworzone.');
     }
@@ -140,6 +146,14 @@ class EventController extends Controller
 
         if (array_key_exists('category_ids', $request->all())) {
             $event->categories()->sync($request->category_ids ?? []);
+        }
+
+        if ($request->hasFile('cover_image')) {
+            if ($event->cover_image && Storage::disk('public')->exists($event->cover_image)) {
+                Storage::disk('public')->delete($event->cover_image);
+            }
+            $path = $request->file('cover_image')->store('event-covers', 'public');
+            $event->update(['cover_image' => $path]);
         }
 
         return redirect()->route('events.show', $event->slug)

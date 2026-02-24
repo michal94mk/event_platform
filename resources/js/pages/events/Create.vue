@@ -34,6 +34,7 @@ const form = useForm({
     ticket_price: '' as string | number,
     currency: 'PLN',
     category_ids: [] as number[],
+    cover_image: null as File | null,
 });
 
 const submit = () => {
@@ -41,7 +42,9 @@ const submit = () => {
         ...data,
         max_attendees: data.max_attendees === '' ? null : Number(data.max_attendees),
         ticket_price: data.ticket_price === '' ? null : Number(data.ticket_price),
-    })).post(route('events.store'));
+    })).post(route('events.store'), {
+        forceFormData: true,
+    });
 };
 
 const toggleCategory = (id: number) => {
@@ -98,6 +101,19 @@ const startDateMin = computed(() => {
                                 placeholder="Opis wydarzenia"
                             />
                             <InputError :message="form.errors.description" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="cover_image">Zdjęcie okładki</Label>
+                            <input
+                                id="cover_image"
+                                type="file"
+                                accept="image/jpeg,image/png,image/jpg,image/webp"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium"
+                                @change="form.cover_image = ($event.target as HTMLInputElement).files?.[0] ?? null"
+                            />
+                            <p class="text-xs text-muted-foreground">JPEG, PNG, WebP, max 2 MB</p>
+                            <InputError :message="form.errors.cover_image" />
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
