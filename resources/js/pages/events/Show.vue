@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
 
 interface Category {
@@ -38,14 +38,18 @@ const props = defineProps<{
     canUpdate: boolean;
     canDelete: boolean;
     canRegister: boolean;
+    registerDisabledReason?: string | null;
     placesLeft: number | null;
     isOrganizer: boolean;
 }>();
 
+const page = usePage();
+const authUser = page.props.auth?.user;
+
 const form = useForm({
-    first_name: '',
-    last_name: '',
-    email: '',
+    first_name: authUser?.name?.split(' ')[0] ?? '',
+    last_name: authUser?.name?.split(' ').slice(1).join(' ') ?? '',
+    email: authUser?.email ?? '',
     phone: '',
     ticket_quantity: 1,
 });
@@ -152,7 +156,10 @@ const submitRegister = () => {
                         </div>
                     </dl>
 
-                    <div v-if="canRegister" class="rounded-lg border bg-muted/30 p-4">
+                    <div v-if="registerDisabledReason" class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+                        {{ registerDisabledReason }}
+                    </div>
+                    <div v-else-if="canRegister" class="rounded-lg border bg-muted/30 p-4">
                         <h3 class="mb-3 font-medium">Zapisz się na wydarzenie</h3>
                         <form @submit.prevent="submitRegister" class="flex flex-col gap-3">
                             <div class="grid grid-cols-2 gap-3">

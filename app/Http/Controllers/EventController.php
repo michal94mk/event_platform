@@ -104,11 +104,23 @@ class EventController extends Controller
             && ($placesLeft === null || $placesLeft > 0)
             && $event->start_date->isFuture();
 
+        $registerDisabledReason = null;
+        if ($event->status === 'published' && ! $canRegister) {
+            if ($event->start_date->isPast()) {
+                $registerDisabledReason = 'Rejestracja zamknięta – wydarzenie już się odbyło.';
+            } elseif ($placesLeft !== null && $placesLeft <= 0) {
+                $registerDisabledReason = 'Rejestracja zamknięta – brak wolnych miejsc.';
+            }
+        } elseif ($event->status !== 'published') {
+            $registerDisabledReason = 'Rejestracja niedostępna – wydarzenie nie jest jeszcze opublikowane.';
+        }
+
         return Inertia::render('events/Show', [
             'event' => $event,
             'canUpdate' => $request->user() && $request->user()->can('update', $event),
             'canDelete' => $request->user() && $request->user()->can('delete', $event),
             'canRegister' => $canRegister,
+            'registerDisabledReason' => $registerDisabledReason,
             'placesLeft' => $placesLeft,
             'isOrganizer' => $request->user() && ($event->user_id === $request->user()->id || $request->user()->isAdmin()),
         ]);
