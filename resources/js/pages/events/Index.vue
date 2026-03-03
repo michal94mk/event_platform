@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
+import { Calendar } from 'lucide-vue-next';
 
 interface EventCategory {
     id: number;
@@ -28,14 +29,22 @@ defineProps<{
     canCreate?: boolean;
     showingMine?: boolean;
 }>();
+
+function formatDate(dateStr: string) {
+    return new Date(dateStr).toLocaleDateString('pl-PL', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    });
+}
 </script>
 
 <template>
     <Head title="Wydarzenia" />
 
     <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
-            <nav class="mx-auto flex max-w-4xl items-center justify-between">
+        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A] sm:px-6">
+            <nav class="mx-auto flex max-w-6xl items-center justify-between">
                 <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
                 <div class="flex flex-wrap items-center gap-4">
                     <Link :href="route('events.index')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Wydarzenia </Link>
@@ -64,14 +73,14 @@ defineProps<{
             </nav>
         </header>
 
-        <main class="mx-auto max-w-4xl px-4 py-8">
-            <h1 class="mb-6 text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">
+        <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+            <h1 class="mb-8 text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC] sm:text-3xl">
                 {{ showingMine ? 'Moje wydarzenia' : 'Wydarzenia' }}
             </h1>
 
             <div
                 v-if="events.length === 0"
-                class="rounded-xl border border-sidebar-border/70 bg-white p-8 text-center dark:border-[#3E3E3A] dark:bg-[#161615]"
+                class="rounded-2xl border border-[#19140035] bg-white p-12 text-center dark:border-[#3E3E3A] dark:bg-[#161615]"
             >
                 <p class="text-[#706f6c] dark:text-[#A1A09A]">
                     {{ showingMine ? 'Nie masz jeszcze żadnych wydarzeń.' : 'Nie ma jeszcze opublikowanych wydarzeń.' }}
@@ -85,33 +94,49 @@ defineProps<{
                 </Link>
             </div>
 
-            <ul v-else class="grid gap-4 sm:grid-cols-2">
+            <ul v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <li
                     v-for="event in events"
                     :key="event.id"
-                    class="overflow-hidden rounded-xl border border-[#19140035] bg-white dark:border-[#3E3E3A] dark:bg-[#161615]"
+                    class="flex"
                 >
-                    <Link :href="route('events.show', event.slug)" class="block">
-                        <img
-                            v-if="event.cover_image_url"
-                            :src="event.cover_image_url"
-                            :alt="event.title"
-                            class="h-36 w-full object-cover"
-                        />
-                        <div class="p-4">
-                        <h2 class="font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
-                            {{ event.title }}
-                        </h2>
-                        <p class="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                            {{ event.venue_name }}<template v-if="event.venue_city">, {{ event.venue_city }}</template>
-                        </p>
-                        <p class="mt-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                            {{ new Date(event.start_date).toLocaleDateString('pl-PL') }}
-                        </p>
-                        <p v-if="event.ticket_price && Number(event.ticket_price) > 0" class="mt-1 text-sm font-medium">
-                            {{ event.ticket_price }} {{ event.currency ?? 'PLN' }}
-                        </p>
-                        <p v-else class="mt-1 text-sm text-green-600 dark:text-green-400">Wstęp wolny</p>
+                    <Link
+                        :href="route('events.show', event.slug)"
+                        class="flex w-full flex-col overflow-hidden rounded-2xl border border-[#19140035] bg-white shadow-sm transition-all hover:shadow-lg hover:border-[#19140050] dark:border-[#3E3E3A] dark:bg-[#161615] dark:hover:border-[#52524e]"
+                    >
+                        <div class="relative aspect-[16/9] min-h-[140px] shrink-0 overflow-hidden bg-gradient-to-br from-[#19140008] via-[#19140012] to-[#19140008] dark:from-[#27272a] dark:via-[#3f3f46] dark:to-[#27272a]">
+                            <img
+                                v-if="event.cover_image_url"
+                                :src="event.cover_image_url"
+                                :alt="event.title"
+                                class="h-full w-full object-cover"
+                            />
+                            <div
+                                v-else
+                                class="flex h-full w-full flex-col items-center justify-center gap-2 text-[#706f6c] dark:text-[#A1A09A]"
+                            >
+                                <div class="rounded-full bg-white/60 p-4 dark:bg-black/20">
+                                    <Calendar class="size-8" stroke-width="1.5" />
+                                </div>
+                                <span class="text-xs font-medium">Brak okładki</span>
+                            </div>
+                        </div>
+                        <div class="flex flex-1 flex-col p-5">
+                            <h2 class="line-clamp-2 font-semibold text-[#1b1b18] leading-snug hover:underline dark:text-[#EDEDEC]">
+                                {{ event.title }}
+                            </h2>
+                            <p class="mt-2 line-clamp-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                                {{ event.venue_name }}<template v-if="event.venue_city">, {{ event.venue_city }}</template>
+                            </p>
+                            <p class="mt-1 text-sm font-medium text-[#1b1b18] dark:text-[#EDEDEC]">
+                                {{ formatDate(event.start_date) }}
+                            </p>
+                            <div class="mt-auto pt-4">
+                                <p v-if="event.ticket_price && Number(event.ticket_price) > 0" class="text-sm font-semibold">
+                                    {{ event.ticket_price }} {{ event.currency ?? 'PLN' }}
+                                </p>
+                                <p v-else class="text-sm font-medium text-green-600 dark:text-green-400">Wstęp wolny</p>
+                            </div>
                         </div>
                     </Link>
                 </li>
