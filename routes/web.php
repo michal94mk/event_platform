@@ -2,11 +2,23 @@
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\RegistrationController;
+use App\Models\Event;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    $featuredEvents = Event::query()
+        ->where('status', 'published')
+        ->where('start_date', '>=', now())
+        ->orderBy('start_date')
+        ->take(6)
+        ->with('user:id,name', 'categories')
+        ->get();
+
+    return Inertia::render('Welcome', [
+        'featuredEvents' => $featuredEvents,
+        'canCreate' => auth()->user() && (auth()->user()->isOrganizer() || auth()->user()->isAdmin()),
+    ]);
 })->name('home');
 
 Route::get('dashboard', function () {
