@@ -22,7 +22,28 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('dashboard', function () {
-    return Inertia::render('Dashboard');
+    $user = auth()->user();
+
+    $upcomingRegistrations = $user->registrations()
+        ->with('event:id,title,slug,start_date,venue_name,venue_city')
+        ->whereHas('event', fn ($q) => $q->where('start_date', '>=', now()))
+        ->orderByDesc('created_at')
+        ->take(5)
+        ->get();
+
+    $organizerStats = null;
+    if ($user->isOrganizer() || $user->isAdmin()) {
+        $organizerStats = [
+            'eventsCount' => $user->events()->count(),
+            'registrationsCount' => $user->events()->withCount('registrations')->get()->sum('registrations_count'),
+        ];
+    }
+
+    return Inertia::render('Dashboard', [
+        'upcomingRegistrations' => $upcomingRegistrations,
+        'organizerStats' => $organizerStats,
+        'canCreate' => $user->isOrganizer() || $user->isAdmin(),
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('events', [EventController::class, 'index'])->name('events.index');
