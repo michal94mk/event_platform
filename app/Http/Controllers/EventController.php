@@ -32,13 +32,44 @@ class EventController extends Controller
             $query->where('status', 'published');
         }
 
+        if ($search = $request->string('search')->toString()) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('venue_name', 'like', "%{$search}%")
+                    ->orWhere('venue_city', 'like', "%{$search}%");
+            });
+        }
+
+        if ($city = $request->string('city')->toString()) {
+            $query->where('venue_city', 'like', "%{$city}%");
+        }
+
+        if ($category = $request->string('category')->toString()) {
+            $query->whereHas('categories', fn ($q) => $q->where('slug', $category));
+        }
+
+        if ($price = $request->string('price')->toString()) {
+            if ($price === 'free') {
+                $query->where(function ($q) {
+                    $q->whereNull('ticket_price')
+                        ->orWhere('ticket_price', 0);
+                });
+            } elseif ($price === 'paid') {
+                $query->where('ticket_price', '>', 0);
+            }
+        }
+
         $events = $query->get();
         $showingMine = $request->user() && ($request->user()->isOrganizer() || $request->user()->isAdmin()) && $request->boolean('mine');
+
+        $filters = $request->only(['search', 'city', 'category', 'price']);
 
         return Inertia::render('events/Index', [
             'events' => $events,
             'canCreate' => $request->user() && ($request->user()->isOrganizer() || $request->user()->isAdmin()),
             'showingMine' => $showingMine,
+            'filters' => $filters,
+            'categories' => EventCategory::orderBy('name')->get(['id', 'name', 'slug']),
         ]);
     }
 

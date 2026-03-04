@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, router } from '@inertiajs/vue3';
 import { Calendar } from 'lucide-vue-next';
+import { reactive } from 'vue';
 
 interface EventCategory {
     id: number;
@@ -24,11 +25,61 @@ interface Event {
     categories?: EventCategory[];
 }
 
-defineProps<{
+interface Filters {
+    search?: string;
+    city?: string;
+    category?: string;
+    price?: string;
+}
+
+const props = defineProps<{
     events: Event[];
     canCreate?: boolean;
     showingMine?: boolean;
+    filters?: Filters;
+    categories?: EventCategory[];
 }>();
+
+const form = reactive<Required<Filters>>({
+    search: props.filters?.search ?? '',
+    city: props.filters?.city ?? '',
+    category: props.filters?.category ?? '',
+    price: props.filters?.price ?? '',
+});
+
+function applyFilters() {
+    const params: Record<string, string | number | undefined> = {
+        ...form,
+    };
+
+    if (props.showingMine) {
+        params.mine = 1;
+    }
+
+    router.get(route('events.index'), params, {
+        preserveScroll: true,
+        preserveState: true,
+        replace: true,
+    });
+}
+
+function resetFilters() {
+    form.search = '';
+    form.city = '';
+    form.category = '';
+    form.price = '';
+
+    const params: Record<string, string | number | undefined> = {};
+    if (props.showingMine) {
+        params.mine = 1;
+    }
+
+    router.get(route('events.index'), params, {
+        preserveScroll: true,
+        preserveState: true,
+        replace: true,
+    });
+}
 
 function formatDate(dateStr: string) {
     return new Date(dateStr).toLocaleDateString('pl-PL', {
@@ -77,6 +128,88 @@ function formatDate(dateStr: string) {
             <h1 class="mb-8 text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC] sm:text-3xl">
                 {{ showingMine ? 'Moje wydarzenia' : 'Wydarzenia' }}
             </h1>
+
+            <form
+                class="mb-8 grid gap-4 rounded-2xl border border-[#19140035] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615] sm:grid-cols-4"
+                @submit.prevent="applyFilters"
+            >
+                <div class="sm:col-span-2">
+                    <label for="search" class="mb-1 block text-xs font-medium uppercase tracking-wide text-[#706f6c] dark:text-[#A1A09A]">
+                        Szukaj
+                    </label>
+                    <input
+                        id="search"
+                        v-model="form.search"
+                        type="text"
+                        placeholder="Nazwa wydarzenia, miejsce, miasto"
+                        class="block w-full rounded-lg border border-[#19140035] bg-white px-3 py-2 text-sm text-[#1b1b18] outline-none ring-0 transition focus:border-[#19140080] focus:ring-2 focus:ring-[#19140010] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:focus:border-[#e4e4e7] dark:focus:ring-[#27272a]"
+                    />
+                </div>
+
+                <div>
+                    <label for="city" class="mb-1 block text-xs font-medium uppercase tracking-wide text-[#706f6c] dark:text-[#A1A09A]">
+                        Miasto
+                    </label>
+                    <input
+                        id="city"
+                        v-model="form.city"
+                        type="text"
+                        placeholder="np. Warszawa"
+                        class="block w-full rounded-lg border border-[#19140035] bg-white px-3 py-2 text-sm text-[#1b1b18] outline-none ring-0 transition focus:border-[#19140080] focus:ring-2 focus:ring-[#19140010] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:focus:border-[#e4e4e7] dark:focus:ring-[#27272a]"
+                    />
+                </div>
+
+                <div>
+                    <label for="category" class="mb-1 block text-xs font-medium uppercase tracking-wide text-[#706f6c] dark:text-[#A1A09A]">
+                        Kategoria
+                    </label>
+                    <select
+                        id="category"
+                        v-model="form.category"
+                        class="block w-full rounded-lg border border-[#19140035] bg-white px-3 py-2 text-sm text-[#1b1b18] outline-none ring-0 transition focus:border-[#19140080] focus:ring-2 focus:ring-[#19140010] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:focus:border-[#e4e4e7] dark:focus:ring-[#27272a]"
+                    >
+                        <option value="">Wszystkie</option>
+                        <option
+                            v-for="category in categories"
+                            :key="category.id"
+                            :value="category.slug"
+                        >
+                            {{ category.name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="price" class="mb-1 block text-xs font-medium uppercase tracking-wide text-[#706f6c] dark:text-[#A1A09A]">
+                        Cena
+                    </label>
+                    <select
+                        id="price"
+                        v-model="form.price"
+                        class="block w-full rounded-lg border border-[#19140035] bg-white px-3 py-2 text-sm text-[#1b1b18] outline-none ring-0 transition focus:border-[#19140080] focus:ring-2 focus:ring-[#19140010] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:focus:border-[#e4e4e7] dark:focus:ring-[#27272a]"
+                    >
+                        <option value="">Wszystkie</option>
+                        <option value="free">Wstęp wolny</option>
+                        <option value="paid">Płatne</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end gap-2 sm:col-span-4">
+                    <button
+                        type="submit"
+                        class="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-primary/90"
+                    >
+                        Zastosuj filtry
+                    </button>
+                    <button
+                        type="button"
+                        class="inline-flex items-center rounded-lg px-3 py-2 text-sm font-medium text-[#706f6c] transition hover:text-[#1b1b18] dark:text-[#A1A09A] dark:hover:text-[#EDEDEC]"
+                        @click="resetFilters"
+                    >
+                        Wyczyść
+                    </button>
+                </div>
+            </form>
 
             <div
                 v-if="events.length === 0"
