@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRegistrationRequest;
+use App\Mail\RegistrationConfirmation;
 use App\Models\Event;
 use App\Models\Registration;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -48,7 +50,10 @@ class RegistrationController extends Controller
 
         $url = route('registrations.show', ['registration' => $registration->id, 'token' => $registration->qr_code]);
 
-        return redirect()->to($url)->with('success', 'Rejestracja zakończona. Poniżej znajdziesz bilet z kodem QR.');
+        $registration->load('event');
+        Mail::to($registration->email)->send(new RegistrationConfirmation($registration));
+
+        return redirect()->to($url)->with('success', 'Rejestracja zakończona. Potwierdzenie wysłano na ' . $registration->email);
     }
 
     public function show(Request $request, Registration $registration)

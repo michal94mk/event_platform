@@ -1,50 +1,16 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RegistrationController;
-use App\Models\Event;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
-Route::get('/', function () {
-    $featuredEvents = Event::query()
-        ->where('status', 'published')
-        ->where('start_date', '>=', now())
-        ->orderBy('start_date')
-        ->take(6)
-        ->with('user:id,name', 'categories')
-        ->get();
+Route::get('/', HomeController::class)->name('home');
 
-    return Inertia::render('Welcome', [
-        'featuredEvents' => $featuredEvents,
-        'canCreate' => auth()->user() && (auth()->user()->isOrganizer() || auth()->user()->isAdmin()),
-    ]);
-})->name('home');
-
-Route::get('dashboard', function () {
-    $user = auth()->user();
-
-    $upcomingRegistrations = $user->registrations()
-        ->with('event:id,title,slug,start_date,venue_name,venue_city')
-        ->whereHas('event', fn ($q) => $q->where('start_date', '>=', now()))
-        ->orderByDesc('created_at')
-        ->take(5)
-        ->get();
-
-    $organizerStats = null;
-    if ($user->isOrganizer() || $user->isAdmin()) {
-        $organizerStats = [
-            'eventsCount' => $user->events()->count(),
-            'registrationsCount' => $user->events()->withCount('registrations')->get()->sum('registrations_count'),
-        ];
-    }
-
-    return Inertia::render('Dashboard', [
-        'upcomingRegistrations' => $upcomingRegistrations,
-        'organizerStats' => $organizerStats,
-        'canCreate' => $user->isOrganizer() || $user->isAdmin(),
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('events', [EventController::class, 'index'])->name('events.index');
 
