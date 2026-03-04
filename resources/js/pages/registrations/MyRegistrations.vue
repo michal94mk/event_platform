@@ -30,7 +30,7 @@ interface Registration {
     event: Event;
 }
 
-const props = defineProps<{
+defineProps<{
     registrations: Registration[];
 }>();
 

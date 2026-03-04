@@ -13,14 +13,12 @@ class RegistrationConfirmation extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct(public Registration $registration)
-    {
-    }
+    public function __construct(public Registration $registration) {}
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Potwierdzenie rejestracji: ' . $this->registration->event->title,
+            subject: 'Potwierdzenie rejestracji: '.$this->registration->event->title,
         );
     }
 

@@ -53,7 +53,7 @@ class RegistrationController extends Controller
         $registration->load('event');
         Mail::to($registration->email)->send(new RegistrationConfirmation($registration));
 
-        return redirect()->to($url)->with('success', 'Rejestracja zakończona. Potwierdzenie wysłano na ' . $registration->email);
+        return redirect()->to($url)->with('success', 'Rejestracja zakończona. Potwierdzenie wysłano na '.$registration->email);
     }
 
     public function show(Request $request, Registration $registration)
