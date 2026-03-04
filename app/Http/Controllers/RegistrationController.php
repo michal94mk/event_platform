@@ -115,4 +115,15 @@ class RegistrationController extends Controller
 
         return back()->with('success', 'Check-in wykonany: '.$registration->first_name.' '.$registration->last_name);
     }
+
+    public function destroy(Request $request, Registration $registration)
+    {
+        $this->authorize('delete', $registration);
+
+        $registration->delete();
+
+        return redirect()
+            ->route('registrations.index')
+            ->with('success', 'Rejestracja została anulowana.');
+    }
 }

@@ -27,4 +27,20 @@ class RegistrationPolicy
     {
         return true;
     }
+
+    /** User can cancel (delete) only own upcoming registration that is not checked in. */
+    public function delete(User $user, Registration $registration): bool
+    {
+        if ($registration->user_id !== $user->id) {
+            return false;
+        }
+
+        if ($registration->checked_in) {
+            return false;
+        }
+
+        return $registration->event
+            && $registration->event->start_date
+            && $registration->event->start_date->isFuture();
+    }
 }

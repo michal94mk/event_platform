@@ -29,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events/{event}/check-in', [RegistrationController::class, 'checkInPage'])->name('events.check-in.page');
     Route::post('events/{event}/check-in', [RegistrationController::class, 'checkIn'])->name('events.check-in');
     Route::get('registrations', [RegistrationController::class, 'index'])->name('registrations.index');
+    Route::delete('registrations/{registration}', [RegistrationController::class, 'destroy'])->name('registrations.destroy');
 });
 
 Route::get('registrations/{registration}', [RegistrationController::class, 'show'])->name('registrations.show');
