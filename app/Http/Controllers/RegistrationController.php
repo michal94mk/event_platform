@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRegistrationRequest;
+use App\Mail\OrganizerRegistrationNotification;
 use App\Mail\RegistrationConfirmation;
 use App\Models\Event;
 use App\Models\Registration;
@@ -50,8 +51,26 @@ class RegistrationController extends Controller
 
         $url = route('registrations.show', ['registration' => $registration->id, 'token' => $registration->qr_code]);
 
-        $registration->load('event');
-        Mail::to($registration->email)->send(new RegistrationConfirmation($registration));
+        $registration->load('event.user');
+
+        $participantMail = new RegistrationConfirmation($registration);
+        $organizerMail = $registration->event->user && $registration->event->user->email
+            ? new OrganizerRegistrationNotification($registration)
+            : null;
+
+        if (config('queue.default') === 'sync') {
+            Mail::to($registration->email)->send($participantMail);
+
+            if ($organizerMail) {
+                Mail::to($registration->event->user->email)->send($organizerMail);
+            }
+        } else {
+            Mail::to($registration->email)->queue($participantMail);
+
+            if ($organizerMail) {
+                Mail::to($registration->event->user->email)->queue($organizerMail);
+            }
+        }
 
         return redirect()->to($url)->with('success', 'Rejestracja zakończona. Potwierdzenie wysłano na '.$registration->email);
     }
@@ -94,10 +113,12 @@ class RegistrationController extends Controller
             abort(403);
         }
 
-        $request->validate(['qr_code' => 'required', 'string']);
+        $request->validate([
+            'qr_code' => ['required', 'string'],
+        ]);
 
         $registration = Registration::where('event_id', $event->id)
-            ->where('qr_code', $request->qr_code)
+            ->where('qr_code', trim($request->qr_code))
             ->first();
 
         if (! $registration) {

@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RegistrationConfirmation extends Mailable implements ShouldQueue
+class OrganizerRegistrationNotification extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -19,14 +19,15 @@ class RegistrationConfirmation extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Potwierdzenie rejestracji: '.$this->registration->event->title,
+            subject: 'Nowa rejestracja na Twoje wydarzenie: '.$this->registration->event->title,
         );
     }
 
     public function content(): Content
     {
         return new Content(
-            view: 'emails.registration-confirmation',
+            view: 'emails.organizer-registration-notification',
         );
     }
 }
+
