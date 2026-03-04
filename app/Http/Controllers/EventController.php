@@ -59,7 +59,7 @@ class EventController extends Controller
             }
         }
 
-        $events = $query->get();
+        $events = $query->paginate(12)->withQueryString();
         $showingMine = $request->user() && ($request->user()->isOrganizer() || $request->user()->isAdmin()) && $request->boolean('mine');
 
         $filters = $request->only(['search', 'city', 'category', 'price']);

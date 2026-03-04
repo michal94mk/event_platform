@@ -32,8 +32,25 @@ interface Filters {
     price?: string;
 }
 
+interface PaginationLink {
+    url: string | null;
+    label: string;
+    active: boolean;
+}
+
+interface EventsPaginated {
+    data: Event[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+    links: PaginationLink[];
+}
+
 const props = defineProps<{
-    events: Event[];
+    events: EventsPaginated;
     canCreate?: boolean;
     showingMine?: boolean;
     filters?: Filters;
@@ -58,7 +75,6 @@ function applyFilters() {
 
     router.get(route('events.index'), params, {
         preserveScroll: true,
-        preserveState: true,
         replace: true,
     });
 }
@@ -76,7 +92,6 @@ function resetFilters() {
 
     router.get(route('events.index'), params, {
         preserveScroll: true,
-        preserveState: true,
         replace: true,
     });
 }
@@ -212,7 +227,7 @@ function formatDate(dateStr: string) {
             </form>
 
             <div
-                v-if="events.length === 0"
+                v-if="events.data.length === 0"
                 class="rounded-2xl border border-[#19140035] bg-white p-12 text-center dark:border-[#3E3E3A] dark:bg-[#161615]"
             >
                 <p class="text-[#706f6c] dark:text-[#A1A09A]">
@@ -229,7 +244,7 @@ function formatDate(dateStr: string) {
 
             <ul v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <li
-                    v-for="event in events"
+                    v-for="event in events.data"
                     :key="event.id"
                     class="flex"
                 >
@@ -274,6 +289,37 @@ function formatDate(dateStr: string) {
                     </Link>
                 </li>
             </ul>
+
+            <nav
+                v-if="events.last_page > 1"
+                class="mt-10 flex flex-wrap items-center justify-center gap-2"
+                aria-label="Paginacja"
+            >
+                <template v-for="(link, index) in events.links" :key="index">
+                    <Link
+                        v-if="link.url"
+                        :href="link.url"
+                        class="inline-flex min-w-[2.5rem] items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium transition"
+                        :class="link.active
+                            ? 'border-primary bg-primary text-white'
+                            : 'border-[#19140035] bg-white text-[#1b1b18] hover:bg-[#19140008] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:hover:bg-[#27272a]'"
+                    >
+                        <span v-html="link.label" />
+                    </Link>
+                    <span
+                        v-else
+                        class="inline-flex min-w-[2.5rem] items-center justify-center px-3 py-2 text-sm text-[#706f6c] dark:text-[#A1A09A]"
+                        v-html="link.label"
+                    />
+                </template>
+            </nav>
+
+            <p
+                v-if="events.data.length > 0"
+                class="mt-6 text-center text-sm text-[#706f6c] dark:text-[#A1A09A]"
+            >
+                Wyświetlono {{ events.from }}–{{ events.to }} z {{ events.total }}
+            </p>
         </main>
     </div>
 </template>
