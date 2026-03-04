@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -25,7 +26,7 @@ class DashboardController extends Controller
         if ($user->isOrganizer() || $user->isAdmin()) {
             $organizerStats = [
                 'eventsCount' => $user->events()->count(),
-                'registrationsCount' => $user->events()->withCount('registrations')->get()->sum('registrations_count'),
+                'registrationsCount' => Registration::whereHas('event', fn ($q) => $q->where('user_id', $user->id))->count(),
             ];
         }
 
