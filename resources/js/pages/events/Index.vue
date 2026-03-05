@@ -30,6 +30,7 @@ interface Filters {
     city?: string;
     category?: string;
     price?: string;
+    sort?: string;
 }
 
 interface PaginationLink {
@@ -62,6 +63,7 @@ const form = reactive<Required<Filters>>({
     city: props.filters?.city ?? '',
     category: props.filters?.category ?? '',
     price: props.filters?.price ?? '',
+    sort: props.filters?.sort ?? '',
 });
 
 function applyFilters() {
@@ -145,7 +147,7 @@ function formatDate(dateStr: string) {
             </h1>
 
             <form
-                class="mb-8 grid gap-4 rounded-2xl border border-[#19140035] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615] sm:grid-cols-4"
+                class="mb-8 grid gap-4 rounded-2xl border border-[#19140035] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615] sm:grid-cols-5"
                 @submit.prevent="applyFilters"
             >
                 <div class="sm:col-span-2">
@@ -209,7 +211,23 @@ function formatDate(dateStr: string) {
                     </select>
                 </div>
 
-                <div class="flex items-end gap-2 sm:col-span-4">
+                <div>
+                    <label for="sort" class="mb-1 block text-xs font-medium uppercase tracking-wide text-[#706f6c] dark:text-[#A1A09A]">
+                        Sortuj
+                    </label>
+                    <select
+                        id="sort"
+                        v-model="form.sort"
+                        class="block w-full rounded-lg border border-[#19140035] bg-white px-3 py-2 text-sm text-[#1b1b18] outline-none ring-0 transition focus:border-[#19140080] focus:ring-2 focus:ring-[#19140010] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:focus:border-[#e4e4e7] dark:focus:ring-[#27272a]"
+                    >
+                        <option value="">Najbliższe (domyślnie)</option>
+                        <option value="date_desc">Najpóźniejsze</option>
+                        <option value="title_asc">Nazwa A–Z</option>
+                        <option value="title_desc">Nazwa Z–A</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end gap-2 sm:col-span-5">
                     <button
                         type="submit"
                         class="inline-flex items-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-primary/90"

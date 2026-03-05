@@ -15,8 +15,7 @@ class EventController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Event::with('user:id,name', 'categories')
-            ->orderBy('start_date');
+        $query = Event::with('user:id,name', 'categories');
 
         if ($request->user()) {
             if ($request->user()->isOrganizer() || $request->user()->isAdmin()) {
@@ -59,10 +58,26 @@ class EventController extends Controller
             }
         }
 
+        $sort = $request->string('sort')->toString();
+        switch ($sort) {
+            case 'date_desc':
+                $query->orderByDesc('start_date');
+                break;
+            case 'title_asc':
+                $query->orderBy('title');
+                break;
+            case 'title_desc':
+                $query->orderByDesc('title');
+                break;
+            default:
+                $query->orderBy('start_date');
+                break;
+        }
+
         $events = $query->paginate(12)->withQueryString();
         $showingMine = $request->user() && ($request->user()->isOrganizer() || $request->user()->isAdmin()) && $request->boolean('mine');
 
-        $filters = $request->only(['search', 'city', 'category', 'price']);
+        $filters = $request->only(['search', 'city', 'category', 'price', 'sort']);
 
         return Inertia::render('events/Index', [
             'events' => $events,
