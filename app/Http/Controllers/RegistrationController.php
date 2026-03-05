@@ -7,6 +7,7 @@ use App\Mail\OrganizerRegistrationNotification;
 use App\Mail\RegistrationConfirmation;
 use App\Models\Event;
 use App\Models\Registration;
+use App\Models\UserNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -70,6 +71,20 @@ class RegistrationController extends Controller
             if ($organizerMail) {
                 Mail::to($registration->event->user->email)->queue($organizerMail);
             }
+        }
+
+        if ($registration->event->user_id) {
+            UserNotification::create([
+                'user_id' => $registration->event->user_id,
+                'type' => 'registration_created',
+                'title' => 'Nowa rejestracja',
+                'message' => $registration->first_name.' '.$registration->last_name.' zapisał się na wydarzenie „'.$registration->event->title.'" ('.$registration->ticket_quantity.' '.($registration->ticket_quantity === 1 ? 'bilet' : 'biletów').').',
+                'data' => [
+                    'event_id' => $registration->event->id,
+                    'event_slug' => $registration->event->slug,
+                    'registration_id' => $registration->id,
+                ],
+            ]);
         }
 
         return redirect()->to($url)->with('success', 'Rejestracja zakończona. Potwierdzenie wysłano na '.$registration->email);
@@ -141,7 +156,27 @@ class RegistrationController extends Controller
     {
         $this->authorize('delete', $registration);
 
+        $registration->load('event');
+        $organizerId = $registration->event->user_id;
+        $eventTitle = $registration->event->title;
+        $eventSlug = $registration->event->slug;
+        $eventId = $registration->event->id;
+        $participantName = $registration->first_name.' '.$registration->last_name;
+
         $registration->delete();
+
+        if ($organizerId) {
+            UserNotification::create([
+                'user_id' => $organizerId,
+                'type' => 'registration_cancelled',
+                'title' => 'Anulowanie rejestracji',
+                'message' => $participantName.' anulował rejestrację na wydarzenie „'.$eventTitle.'".',
+                'data' => [
+                    'event_id' => $eventId,
+                    'event_slug' => $eventSlug,
+                ],
+            ]);
+        }
 
         return redirect()
             ->route('registrations.index')

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\UserNotification;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -38,6 +39,24 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $notifications = ['unreadCount' => 0, 'recent' => []];
+        if ($request->user()) {
+            $notifications['unreadCount'] = UserNotification::where('user_id', $request->user()->id)->whereNull('read_at')->count();
+            $notifications['recent'] = UserNotification::where('user_id', $request->user()->id)
+                ->orderByDesc('created_at')
+                ->take(5)
+                ->get()
+                ->map(fn (UserNotification $n) => [
+                    'id' => $n->id,
+                    'type' => $n->type,
+                    'title' => $n->title,
+                    'message' => $n->message,
+                    'read_at' => $n->read_at?->toIso8601String(),
+                    'data' => $n->data,
+                    'created_at' => $n->created_at->toIso8601String(),
+                ]);
+        }
+
         return array_merge(parent::share($request), [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -45,6 +64,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'notifications' => $notifications,
         ]);
     }
 }
