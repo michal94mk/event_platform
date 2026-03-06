@@ -30,4 +30,3 @@ class OrganizerRegistrationNotification extends Mailable implements ShouldQueue
         );
     }
 }
-

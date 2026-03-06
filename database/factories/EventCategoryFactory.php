@@ -15,10 +15,10 @@ class EventCategoryFactory extends Factory
         $name = ucfirst(fake()->unique()->word());
 
         return [
-            'name'        => $name,
-            'slug'        => Str::slug($name),
+            'name' => $name,
+            'slug' => Str::slug($name),
             'description' => fake()->sentence(),
-            'icon'        => null,
+            'icon' => null,
         ];
     }
 }

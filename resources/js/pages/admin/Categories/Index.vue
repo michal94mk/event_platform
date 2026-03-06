@@ -30,7 +30,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Kategorie', href: '/admin/categories' },
 ];
 
-const props = defineProps<{
+defineProps<{
     categories: Category[];
 }>();
 

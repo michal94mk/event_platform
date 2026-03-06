@@ -155,9 +155,9 @@ class EventTest extends TestCase
             ->assertRedirect();
 
         $this->assertDatabaseHas('events', [
-            'title'   => 'Testowe Wydarzenie Laravel',
+            'title' => 'Testowe Wydarzenie Laravel',
             'user_id' => $organizer->id,
-            'status'  => 'draft',
+            'status' => 'draft',
         ]);
     }
 
@@ -364,7 +364,7 @@ class EventTest extends TestCase
             ->assertRedirect(route('events.show', $event->slug));
 
         $this->assertDatabaseHas('events', [
-            'id'    => $event->id,
+            'id' => $event->id,
             'title' => 'Zaktualizowany Tytuł',
         ]);
     }
@@ -453,12 +453,12 @@ class EventTest extends TestCase
     private function validEventData(array $overrides = []): array
     {
         return array_merge([
-            'title'         => 'Testowe Wydarzenie Laravel',
-            'description'   => 'Opis testowego wydarzenia, który jest wystarczająco długi.',
-            'start_date'    => now()->addDays(10)->format('Y-m-d H:i:s'),
-            'end_date'      => now()->addDays(10)->addHours(4)->format('Y-m-d H:i:s'),
-            'venue_name'    => 'Sala Konferencyjna A',
-            'venue_city'    => 'Warszawa',
+            'title' => 'Testowe Wydarzenie Laravel',
+            'description' => 'Opis testowego wydarzenia, który jest wystarczająco długi.',
+            'start_date' => now()->addDays(10)->format('Y-m-d H:i:s'),
+            'end_date' => now()->addDays(10)->addHours(4)->format('Y-m-d H:i:s'),
+            'venue_name' => 'Sala Konferencyjna A',
+            'venue_city' => 'Warszawa',
             'venue_country' => 'Poland',
         ], $overrides);
     }
@@ -466,12 +466,12 @@ class EventTest extends TestCase
     private function validUpdateData(array $overrides = []): array
     {
         return array_merge([
-            'title'         => 'Zaktualizowany Tytuł',
-            'description'   => 'Zaktualizowany opis wydarzenia.',
-            'start_date'    => now()->addDays(14)->format('Y-m-d H:i:s'),
-            'end_date'      => now()->addDays(14)->addHours(4)->format('Y-m-d H:i:s'),
-            'venue_name'    => 'Nowa Sala B',
-            'venue_city'    => 'Kraków',
+            'title' => 'Zaktualizowany Tytuł',
+            'description' => 'Zaktualizowany opis wydarzenia.',
+            'start_date' => now()->addDays(14)->format('Y-m-d H:i:s'),
+            'end_date' => now()->addDays(14)->addHours(4)->format('Y-m-d H:i:s'),
+            'venue_name' => 'Nowa Sala B',
+            'venue_city' => 'Kraków',
             'venue_country' => 'Poland',
         ], $overrides);
     }

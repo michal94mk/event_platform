@@ -16,21 +16,21 @@ class EventFactory extends Factory
         $title = fake()->unique()->sentence(4);
 
         return [
-            'user_id'          => User::factory()->organizer(),
-            'title'            => $title,
-            'description'      => fake()->paragraphs(2, true),
-            'slug'             => Str::slug($title),
-            'start_date'       => now()->addDays(7),
-            'end_date'         => now()->addDays(7)->addHours(3),
-            'venue_name'       => fake()->company(),
-            'venue_address'    => fake()->streetAddress(),
-            'venue_city'       => fake()->city(),
-            'venue_country'    => 'Poland',
-            'max_attendees'    => null,
-            'ticket_price'     => null,
-            'currency'         => 'PLN',
-            'status'           => 'published',
-            'cover_image'      => null,
+            'user_id' => User::factory()->organizer(),
+            'title' => $title,
+            'description' => fake()->paragraphs(2, true),
+            'slug' => Str::slug($title),
+            'start_date' => now()->addDays(7),
+            'end_date' => now()->addDays(7)->addHours(3),
+            'venue_name' => fake()->company(),
+            'venue_address' => fake()->streetAddress(),
+            'venue_city' => fake()->city(),
+            'venue_country' => 'Poland',
+            'max_attendees' => null,
+            'ticket_price' => null,
+            'currency' => 'PLN',
+            'status' => 'published',
+            'cover_image' => null,
         ];
     }
 
@@ -53,7 +53,7 @@ class EventFactory extends Factory
     {
         return $this->state([
             'start_date' => now()->subDays(7),
-            'end_date'   => now()->subDays(7)->addHours(3),
+            'end_date' => now()->subDays(7)->addHours(3),
         ]);
     }
 

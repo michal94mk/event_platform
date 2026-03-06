@@ -7,7 +7,6 @@ use App\Mail\RegistrationConfirmation;
 use App\Models\Event;
 use App\Models\Registration;
 use App\Models\User;
-use App\Models\UserNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
@@ -55,10 +54,10 @@ class RegistrationTest extends TestCase
             ->assertRedirect();
 
         $this->assertDatabaseHas('registrations', [
-            'event_id'   => $event->id,
-            'user_id'    => $user->id,
+            'event_id' => $event->id,
+            'user_id' => $user->id,
             'first_name' => 'Jan',
-            'last_name'  => 'Kowalski',
+            'last_name' => 'Kowalski',
         ]);
     }
 
@@ -73,8 +72,8 @@ class RegistrationTest extends TestCase
 
         $this->assertDatabaseHas('registrations', [
             'event_id' => $event->id,
-            'user_id'  => null,
-            'email'    => 'jan@example.com',
+            'user_id' => null,
+            'email' => 'jan@example.com',
         ]);
     }
 
@@ -112,7 +111,7 @@ class RegistrationTest extends TestCase
 
         $this->assertDatabaseHas('notifications', [
             'user_id' => $organizer->id,
-            'type'    => 'registration_created',
+            'type' => 'registration_created',
         ]);
     }
 
@@ -125,9 +124,9 @@ class RegistrationTest extends TestCase
         $this->post(route('events.register', $event->slug), $this->registrationData());
 
         $this->assertDatabaseHas('registrations', [
-            'event_id'       => $event->id,
+            'event_id' => $event->id,
             'payment_status' => 'paid',
-            'total_amount'   => '0.00',
+            'total_amount' => '0.00',
         ]);
     }
 
@@ -140,9 +139,9 @@ class RegistrationTest extends TestCase
         $this->post(route('events.register', $event->slug), $this->registrationData(['ticket_quantity' => 1]));
 
         $this->assertDatabaseHas('registrations', [
-            'event_id'       => $event->id,
+            'event_id' => $event->id,
             'payment_status' => 'pending',
-            'total_amount'   => '100.00',
+            'total_amount' => '100.00',
         ]);
     }
 
@@ -171,12 +170,12 @@ class RegistrationTest extends TestCase
         $event = Event::factory()->published()->create();
         $registration = Registration::factory()->create([
             'event_id' => $event->id,
-            'qr_code'  => 'valid-token-12345678901234567',
+            'qr_code' => 'valid-token-12345678901234567',
         ]);
 
         $this->get(route('registrations.show', [
             'registration' => $registration->id,
-            'token'        => 'valid-token-12345678901234567',
+            'token' => 'valid-token-12345678901234567',
         ]))
             ->assertOk()
             ->assertInertia(fn ($page) => $page->has('registration'));
@@ -187,12 +186,12 @@ class RegistrationTest extends TestCase
         $event = Event::factory()->published()->create();
         $registration = Registration::factory()->create([
             'event_id' => $event->id,
-            'qr_code'  => 'correct-token-12345678901234',
+            'qr_code' => 'correct-token-12345678901234',
         ]);
 
         $this->get(route('registrations.show', [
             'registration' => $registration->id,
-            'token'        => 'wrong-token',
+            'token' => 'wrong-token',
         ]))
             ->assertForbidden();
     }
@@ -202,7 +201,7 @@ class RegistrationTest extends TestCase
         $user = User::factory()->create();
         $event = Event::factory()->published()->create();
         $registration = Registration::factory()->create([
-            'user_id'  => $user->id,
+            'user_id' => $user->id,
             'event_id' => $event->id,
         ]);
 
@@ -267,7 +266,7 @@ class RegistrationTest extends TestCase
         $event = Event::factory()->create(['user_id' => $organizer->id]);
         $registration = Registration::factory()->create([
             'event_id' => $event->id,
-            'qr_code'  => 'VALID-QR-CODE-123456789012345',
+            'qr_code' => 'VALID-QR-CODE-123456789012345',
         ]);
 
         $this->actingAs($organizer)
@@ -275,7 +274,7 @@ class RegistrationTest extends TestCase
             ->assertRedirect();
 
         $this->assertDatabaseHas('registrations', [
-            'id'         => $registration->id,
+            'id' => $registration->id,
             'checked_in' => true,
         ]);
     }
@@ -296,7 +295,7 @@ class RegistrationTest extends TestCase
         $event = Event::factory()->create(['user_id' => $organizer->id]);
         Registration::factory()->checkedIn()->create([
             'event_id' => $event->id,
-            'qr_code'  => 'ALREADY-CHECKEDIN-QR-12345678',
+            'qr_code' => 'ALREADY-CHECKEDIN-QR-12345678',
         ]);
 
         $this->actingAs($organizer)
@@ -324,7 +323,7 @@ class RegistrationTest extends TestCase
         $user = User::factory()->create();
         $event = Event::factory()->published()->create();
         $registration = Registration::factory()->create([
-            'user_id'  => $user->id,
+            'user_id' => $user->id,
             'event_id' => $event->id,
         ]);
 
@@ -341,7 +340,7 @@ class RegistrationTest extends TestCase
         $user = User::factory()->create();
         $event = Event::factory()->published()->create(['user_id' => $organizer->id]);
         $registration = Registration::factory()->create([
-            'user_id'  => $user->id,
+            'user_id' => $user->id,
             'event_id' => $event->id,
         ]);
 
@@ -350,7 +349,7 @@ class RegistrationTest extends TestCase
 
         $this->assertDatabaseHas('notifications', [
             'user_id' => $organizer->id,
-            'type'    => 'registration_cancelled',
+            'type' => 'registration_cancelled',
         ]);
     }
 
@@ -359,7 +358,7 @@ class RegistrationTest extends TestCase
         $user = User::factory()->create();
         $event = Event::factory()->published()->create();
         $registration = Registration::factory()->checkedIn()->create([
-            'user_id'  => $user->id,
+            'user_id' => $user->id,
             'event_id' => $event->id,
         ]);
 
@@ -375,7 +374,7 @@ class RegistrationTest extends TestCase
         $user = User::factory()->create();
         $event = Event::factory()->published()->past()->create();
         $registration = Registration::factory()->create([
-            'user_id'  => $user->id,
+            'user_id' => $user->id,
             'event_id' => $event->id,
         ]);
 
@@ -404,9 +403,9 @@ class RegistrationTest extends TestCase
     private function registrationData(array $overrides = []): array
     {
         return array_merge([
-            'first_name'      => 'Jan',
-            'last_name'       => 'Kowalski',
-            'email'           => 'jan@example.com',
+            'first_name' => 'Jan',
+            'last_name' => 'Kowalski',
+            'email' => 'jan@example.com',
             'ticket_quantity' => 1,
         ], $overrides);
     }

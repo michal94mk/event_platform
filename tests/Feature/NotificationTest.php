@@ -102,10 +102,10 @@ class NotificationTest extends TestCase
     {
         return UserNotification::create(array_merge([
             'user_id' => $user->id,
-            'type'    => 'registration_created',
-            'title'   => $title,
+            'type' => 'registration_created',
+            'title' => $title,
             'message' => 'Treść powiadomienia.',
-            'data'    => [],
+            'data' => [],
         ], $overrides));
     }
 }
