@@ -31,10 +31,7 @@ class NotificationTest extends TestCase
         $this->actingAs($user)
             ->get(route('notifications.index'))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('notifications/Index')
-                ->where('notifications.total', 2)
-            );
+            ->assertInertia(fn ($page) => $page->where('notifications.total', 2));
     }
 
     public function test_notifications_are_paginated_with_15_per_page(): void

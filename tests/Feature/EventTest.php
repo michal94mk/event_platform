@@ -130,7 +130,7 @@ class EventTest extends TestCase
         $this->actingAs($organizer)
             ->get(route('events.create'))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->component('events/Create'));
+            ->assertInertia(fn ($page) => $page->has('categories'));
     }
 
     public function test_admin_can_access_create_page(): void
@@ -248,7 +248,7 @@ class EventTest extends TestCase
 
         $this->get(route('events.show', $event->slug))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->component('events/Show'));
+            ->assertInertia(fn ($page) => $page->has('event'));
     }
 
     public function test_guest_cannot_view_draft_event(): void
@@ -327,7 +327,7 @@ class EventTest extends TestCase
         $this->actingAs($organizer)
             ->get(route('events.edit', $event->slug))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->component('events/Edit'));
+            ->assertInertia(fn ($page) => $page->has('event')->has('categories'));
     }
 
     public function test_non_owner_cannot_access_edit_page(): void

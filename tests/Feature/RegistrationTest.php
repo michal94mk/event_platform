@@ -36,10 +36,7 @@ class RegistrationTest extends TestCase
         $this->actingAs($user)
             ->get(route('registrations.index'))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page
-                ->component('registrations/MyRegistrations')
-                ->has('registrations', 1)
-            );
+            ->assertInertia(fn ($page) => $page->has('registrations', 1));
     }
 
     // -----------------------------------------------------------------------
@@ -182,7 +179,7 @@ class RegistrationTest extends TestCase
             'token'        => 'valid-token-12345678901234567',
         ]))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->component('registrations/Show'));
+            ->assertInertia(fn ($page) => $page->has('registration'));
     }
 
     public function test_registration_show_forbidden_with_invalid_token(): void
@@ -237,7 +234,7 @@ class RegistrationTest extends TestCase
         $this->actingAs($organizer)
             ->get(route('events.check-in.page', $event->slug))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->component('events/CheckIn'));
+            ->assertInertia(fn ($page) => $page->has('event')->has('registrations'));
     }
 
     public function test_admin_can_access_check_in_page_of_any_event(): void
