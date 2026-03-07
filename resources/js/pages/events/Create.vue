@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
 import InputError from '@/components/InputError.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -61,23 +63,19 @@ const startDateMin = computed(() => {
     d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
     return d.toISOString().slice(0, 16);
 });
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Strona główna', href: '/' },
+    { title: 'Wydarzenia', href: '/events' },
+    { title: 'Dodaj wydarzenie', href: '/events/create' },
+];
 </script>
 
 <template>
     <Head title="Dodaj wydarzenie" />
 
-    <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
-            <nav class="mx-auto flex max-w-4xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
-                <div class="flex gap-4">
-                    <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
-                    <Link :href="route('dashboard')" class="text-sm hover:underline">Dashboard</Link>
-                </div>
-            </nav>
-        </header>
-
-        <main class="mx-auto max-w-2xl px-4 py-8">
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="mx-auto max-w-2xl">
             <Card>
                 <CardHeader>
                     <CardTitle>Dodaj wydarzenie</CardTitle>
@@ -193,6 +191,6 @@ const startDateMin = computed(() => {
                     </form>
                 </CardContent>
             </Card>
-        </main>
-    </div>
+        </div>
+    </AppLayout>
 </template>

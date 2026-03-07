@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Calendar } from 'lucide-vue-next';
 import { reactive } from 'vue';
@@ -105,43 +107,18 @@ function formatDate(dateStr: string) {
         year: 'numeric',
     });
 }
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Strona główna', href: '/' },
+    { title: 'Wydarzenia', href: '/events' },
+];
 </script>
 
 <template>
     <Head title="Wydarzenia" />
 
-    <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A] sm:px-6">
-            <nav class="mx-auto flex max-w-6xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
-                <div class="flex flex-wrap items-center gap-4">
-                    <Link :href="route('events.index')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Wydarzenia </Link>
-                    <template v-if="canCreate">
-                        <Link
-                            v-if="!showingMine"
-                            :href="route('events.index', { mine: 1 })"
-                            class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"
-                        >
-                            Moje wydarzenia
-                        </Link>
-                        <Link v-else :href="route('events.index')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
-                            Wszystkie wydarzenia
-                        </Link>
-                        <Link :href="route('events.create')" class="text-sm font-medium text-primary hover:underline"> Dodaj wydarzenie </Link>
-                    </template>
-                    <Link v-if="$page.props.auth?.user" :href="route('registrations.index')" class="text-sm hover:underline"> Moje rejestracje </Link>
-                    <Link v-if="$page.props.auth?.user" :href="route('dashboard')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
-                        Dashboard
-                    </Link>
-                    <template v-else>
-                        <Link :href="route('login')" class="text-sm hover:underline">Logowanie</Link>
-                        <Link :href="route('register')" class="text-sm hover:underline">Rejestracja</Link>
-                    </template>
-                </div>
-            </nav>
-        </header>
-
-        <main class="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="mx-auto max-w-6xl">
             <h1 class="mb-8 text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC] sm:text-3xl">
                 {{ showingMine ? 'Moje wydarzenia' : 'Wydarzenia' }}
             </h1>
@@ -338,6 +315,6 @@ function formatDate(dateStr: string) {
             >
                 Wyświetlono {{ events.from }}–{{ events.to }} z {{ events.total }}
             </p>
-        </main>
-    </div>
+        </div>
+    </AppLayout>
 </template>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 import { Calendar, QrCode, Ticket } from 'lucide-vue-next';
+
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Strona główna', href: '/' }];
 
 interface EventCategory {
     id: number;
@@ -41,38 +45,9 @@ function formatDate(dateStr: string) {
 <template>
     <Head title="Event Platform – Twórz wydarzenia, zarządzaj uczestnikami" />
 
-    <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
-            <nav class="mx-auto flex max-w-6xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-semibold text-[#1b1b18] dark:text-[#EDEDEC]">
-                    Event Platform
-                </Link>
-                <div class="flex flex-wrap items-center gap-4">
-                    <Link :href="route('events.index')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
-                        Wydarzenia
-                    </Link>
-                    <template v-if="canCreate">
-                        <Link :href="route('events.create')" class="text-sm font-medium text-primary hover:underline">
-                            Dodaj wydarzenie
-                        </Link>
-                    </template>
-                    <Link v-if="$page.props.auth?.user" :href="route('registrations.index')" class="text-sm hover:underline">
-                        Moje rejestracje
-                    </Link>
-                    <Link v-if="$page.props.auth?.user" :href="route('dashboard')" class="text-sm text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
-                        Dashboard
-                    </Link>
-                    <template v-else>
-                        <Link :href="route('login')" class="text-sm hover:underline">Logowanie</Link>
-                        <Link :href="route('register')" class="rounded-sm border border-[#19140035] px-4 py-3 text-sm font-medium text-[#1b1b18] hover:bg-[#1914000a] dark:border-[#3E3E3A] dark:text-[#EDEDEC] dark:hover:bg-[#3E3E3A]">
-                            Rejestracja
-                        </Link>
-                    </template>
-                </div>
-            </nav>
-        </header>
-
-        <main>
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
+            <main>
             <!-- Hero -->
             <section class="mx-auto max-w-6xl px-4 py-16 md:py-24 lg:py-32">
                 <div class="mx-auto max-w-2xl text-center">
@@ -244,10 +219,11 @@ function formatDate(dateStr: string) {
             </section>
         </main>
 
-        <footer class="mt-16 border-t border-[#19140035] px-4 py-8 dark:border-[#3E3E3A]">
-            <div class="mx-auto max-w-6xl text-center text-sm text-[#706f6c] dark:text-[#A1A09A]">
-                Event Platform – platforma do zarządzania wydarzeniami
-            </div>
-        </footer>
-    </div>
+            <footer class="mt-16 border-t border-[#19140035] px-4 py-8 dark:border-[#3E3E3A]">
+                <div class="mx-auto max-w-6xl text-center text-sm text-[#706f6c] dark:text-[#A1A09A]">
+                    Event Platform – platforma do zarządzania wydarzeniami
+                </div>
+            </footer>
+        </div>
+    </AppLayout>
 </template>

@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
 import InputError from '@/components/InputError.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -57,27 +59,19 @@ const form = useForm({
 const submitRegister = () => {
     form.post(route('events.register', props.event.slug));
 };
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Strona główna', href: '/' },
+    { title: 'Wydarzenia', href: '/events' },
+    { title: props.event.title, href: `/events/${props.event.slug}` },
+];
 </script>
 
 <template>
     <Head :title="event.title" />
 
-    <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
-            <nav class="mx-auto flex max-w-4xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
-                <div class="flex gap-4">
-                    <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
-                    <Link v-if="$page.props.auth?.user" :href="route('dashboard')" class="text-sm hover:underline">Dashboard</Link>
-                    <template v-else>
-                        <Link :href="route('login')" class="text-sm hover:underline">Logowanie</Link>
-                        <Link :href="route('register')" class="text-sm hover:underline">Rejestracja</Link>
-                    </template>
-                </div>
-            </nav>
-        </header>
-
-        <main class="mx-auto max-w-2xl px-4 py-8">
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="mx-auto max-w-2xl">
             <Card>
                 <img
                     v-if="event.cover_image_url"
@@ -209,6 +203,6 @@ const submitRegister = () => {
                     </div>
                 </CardContent>
             </Card>
-        </main>
-    </div>
+        </div>
+    </AppLayout>
 </template>

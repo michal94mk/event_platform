@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
 import InputError from '@/components/InputError.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -77,24 +79,20 @@ const toggleCategory = (id: number) => {
         form.category_ids = form.category_ids.filter((c) => c !== id);
     }
 };
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Strona główna', href: '/' },
+    { title: 'Wydarzenia', href: '/events' },
+    { title: props.event.title, href: `/events/${props.event.slug}` },
+    { title: 'Edycja', href: `/events/${props.event.slug}/edit` },
+];
 </script>
 
 <template>
     <Head :title="'Edycja: ' + event.title" />
 
-    <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
-            <nav class="mx-auto flex max-w-4xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
-                <div class="flex gap-4">
-                    <Link :href="route('events.show', event.slug)" class="text-sm hover:underline">Szczegóły</Link>
-                    <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
-                    <Link :href="route('dashboard')" class="text-sm hover:underline">Dashboard</Link>
-                </div>
-            </nav>
-        </header>
-
-        <main class="mx-auto max-w-2xl px-4 py-8">
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="mx-auto max-w-2xl">
             <Card>
                 <CardHeader>
                     <CardTitle>Edycja wydarzenia</CardTitle>
@@ -231,6 +229,6 @@ const toggleCategory = (id: number) => {
                     </form>
                 </CardContent>
             </Card>
-        </main>
-    </div>
+        </div>
+    </AppLayout>
 </template>

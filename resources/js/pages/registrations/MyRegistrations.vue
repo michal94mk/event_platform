@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Dialog from '@/components/ui/dialog/Dialog.vue';
@@ -7,8 +8,14 @@ import DialogDescription from '@/components/ui/dialog/DialogDescription.vue';
 import DialogFooter from '@/components/ui/dialog/DialogFooter.vue';
 import DialogHeader from '@/components/ui/dialog/DialogHeader.vue';
 import DialogTitle from '@/components/ui/dialog/DialogTitle.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Strona główna', href: '/' },
+    { title: 'Moje rejestracje', href: '#' },
+];
 
 interface Event {
     id: number;
@@ -89,19 +96,8 @@ function canCancel(registration: Registration): boolean {
 <template>
     <Head title="Moje rejestracje" />
 
-    <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
-        <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
-            <nav class="mx-auto flex max-w-4xl items-center justify-between">
-                <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
-                <div class="flex gap-4">
-                    <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
-                    <Link :href="route('registrations.index')" class="text-sm font-medium hover:underline">Moje rejestracje</Link>
-                    <Link :href="route('dashboard')" class="text-sm hover:underline">Dashboard</Link>
-                </div>
-            </nav>
-        </header>
-
-        <main class="mx-auto max-w-2xl px-4 py-8">
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="mx-auto max-w-2xl">
             <h1 class="mb-6 text-2xl font-semibold">Moje rejestracje</h1>
 
             <div v-if="registrations.length === 0" class="rounded-xl border bg-card p-8 text-center text-muted-foreground">
@@ -166,6 +162,6 @@ function canCancel(registration: Registration): boolean {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </main>
-    </div>
+        </div>
+    </AppLayout>
 </template>
