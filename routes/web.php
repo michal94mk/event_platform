@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
@@ -9,11 +10,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
+Route::get('calendar/subscribe', [CalendarController::class, 'subscribe'])->name('calendar.subscribe');
+
 Route::get('dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 
 Route::get('events', [EventController::class, 'index'])->name('events.index');
+Route::get('events/calendar', [EventController::class, 'calendar'])->name('events.calendar.feed');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events/create', [EventController::class, 'create'])->name('events.create');
@@ -21,6 +25,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('events/{event}', [EventController::class, 'show'])->name('events.show');
+Route::get('events/{event}/calendar.ics', [CalendarController::class, 'event'])->name('events.calendar');
 Route::post('events/{event}/register', [RegistrationController::class, 'store'])->name('events.register');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -36,6 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('registrations/{registration}', [RegistrationController::class, 'show'])->name('registrations.show');
+Route::get('registrations/{registration}/calendar.ics', [CalendarController::class, 'registration'])->name('registrations.calendar');
 
 require __DIR__.'/admin.php';
 require __DIR__.'/settings.php';

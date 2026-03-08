@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { LoaderCircle } from 'lucide-vue-next';
+import { Calendar, LoaderCircle } from 'lucide-vue-next';
 
 interface Category {
     id: number;
@@ -191,6 +191,17 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </div>
 
                     <div class="flex flex-wrap gap-2 pt-4">
+                        <a
+                            v-if="event.status === 'published'"
+                            :href="route('events.calendar', event.slug)"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Button variant="outline" size="sm">
+                                <Calendar class="mr-2 h-4 w-4" />
+                                Dodaj do kalendarza
+                            </Button>
+                        </a>
                         <Link v-if="isOrganizer" :href="route('events.check-in.page', event.slug)">
                             <Button variant="secondary" size="sm">Check-in uczestników</Button>
                         </Link>

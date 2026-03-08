@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
+import EventCalendar from '@/components/Calendar/EventCalendar.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Calendar } from 'lucide-vue-next';
-import { reactive } from 'vue';
+import { Calendar, CalendarDays, List } from 'lucide-vue-next';
+import { computed, reactive } from 'vue';
 
 interface EventCategory {
     id: number;
@@ -58,6 +59,7 @@ const props = defineProps<{
     showingMine?: boolean;
     filters?: Filters;
     categories?: EventCategory[];
+    view?: 'list' | 'calendar';
 }>();
 
 const form = reactive<Required<Filters>>({
@@ -68,9 +70,12 @@ const form = reactive<Required<Filters>>({
     sort: props.filters?.sort ?? '',
 });
 
+const currentView = computed(() => props.view ?? 'list');
+
 function applyFilters() {
     const params: Record<string, string | number | undefined> = {
         ...form,
+        view: currentView.value,
     };
 
     if (props.showingMine) {
@@ -89,11 +94,27 @@ function resetFilters() {
     form.category = '';
     form.price = '';
 
-    const params: Record<string, string | number | undefined> = {};
+    const params: Record<string, string | number | undefined> = {
+        view: currentView.value,
+    };
     if (props.showingMine) {
         params.mine = 1;
     }
 
+    router.get(route('events.index'), params, {
+        preserveScroll: true,
+        replace: true,
+    });
+}
+
+function setView(view: 'list' | 'calendar') {
+    const params: Record<string, string | number | undefined> = {
+        ...form,
+        view,
+    };
+    if (props.showingMine) {
+        params.mine = 1;
+    }
     router.get(route('events.index'), params, {
         preserveScroll: true,
         replace: true,
@@ -122,6 +143,31 @@ const breadcrumbs: BreadcrumbItem[] = [
             <h1 class="mb-8 text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC] sm:text-3xl">
                 {{ showingMine ? 'Moje wydarzenia' : 'Wydarzenia' }}
             </h1>
+
+            <div class="mb-6 flex gap-2">
+                <button
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition"
+                    :class="currentView === 'list'
+                        ? 'bg-primary text-white'
+                        : 'bg-white text-[#706f6c] hover:bg-[#19140008] dark:bg-[#161615] dark:text-[#A1A09A] dark:hover:bg-[#27272a]'"
+                    @click="setView('list')"
+                >
+                    <List class="h-4 w-4" />
+                    Lista
+                </button>
+                <button
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition"
+                    :class="currentView === 'calendar'
+                        ? 'bg-primary text-white'
+                        : 'bg-white text-[#706f6c] hover:bg-[#19140008] dark:bg-[#161615] dark:text-[#A1A09A] dark:hover:bg-[#27272a]'"
+                    @click="setView('calendar')"
+                >
+                    <CalendarDays class="h-4 w-4" />
+                    Kalendarz
+                </button>
+            </div>
 
             <form
                 class="mb-8 grid gap-4 rounded-2xl border border-[#19140035] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615] sm:grid-cols-5"
@@ -221,8 +267,16 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </div>
             </form>
 
+            <EventCalendar
+                v-if="currentView === 'calendar'"
+                :feed-url="route('events.calendar.feed')"
+                :filters="filters ?? {}"
+                :mine="!!showingMine"
+                class="mb-8"
+            />
+
             <div
-                v-if="events.data.length === 0"
+                v-else-if="events.data.length === 0"
                 class="rounded-2xl border border-[#19140035] bg-white p-12 text-center dark:border-[#3E3E3A] dark:bg-[#161615]"
             >
                 <p class="text-[#706f6c] dark:text-[#A1A09A]">
@@ -237,7 +291,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </Link>
             </div>
 
-            <ul v-else class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <ul v-else-if="currentView === 'list'" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 <li
                     v-for="event in events.data"
                     :key="event.id"
@@ -286,7 +340,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             </ul>
 
             <nav
-                v-if="events.last_page > 1"
+                v-if="currentView === 'list' && events.last_page > 1"
                 class="mt-10 flex flex-wrap items-center justify-center gap-2"
                 aria-label="Paginacja"
             >
@@ -310,7 +364,7 @@ const breadcrumbs: BreadcrumbItem[] = [
             </nav>
 
             <p
-                v-if="events.data.length > 0"
+                v-if="currentView === 'list' && events.data.length > 0"
                 class="mt-6 text-center text-sm text-[#706f6c] dark:text-[#A1A09A]"
             >
                 Wyświetlono {{ events.from }}–{{ events.to }} z {{ events.total }}

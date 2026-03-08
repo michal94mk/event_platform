@@ -67,6 +67,11 @@ class User extends Authenticatable
         return $this->hasMany(UserNotification::class, 'user_id');
     }
 
+    public function calendarSubscriptionToken()
+    {
+        return $this->hasOne(CalendarSubscriptionToken::class);
+    }
+
     public function isOrganizer(): bool
     {
         return $this->role === 'organizer';

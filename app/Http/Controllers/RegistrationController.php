@@ -103,8 +103,13 @@ class RegistrationController extends Controller
 
         $registration->load('event:id,title,slug,start_date,end_date,venue_name,venue_city');
 
+        $calendarUrl = $token
+            ? route('registrations.calendar', ['registration' => $registration->id, 'token' => $token])
+            : route('registrations.calendar', $registration->id);
+
         return Inertia::render('registrations/Show', [
             'registration' => $registration,
+            'calendarUrl' => $calendarUrl,
         ]);
     }
 

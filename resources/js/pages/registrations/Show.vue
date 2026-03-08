@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Head, Link } from '@inertiajs/vue3';
+import { Calendar } from 'lucide-vue-next';
 import QrcodeVue from 'qrcode.vue';
 
 interface Event {
@@ -32,6 +33,7 @@ interface Registration {
 
 const props = defineProps<{
     registration: Registration;
+    calendarUrl: string;
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -77,7 +79,13 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                     </dl>
 
-                    <div class="pt-4">
+                    <div class="pt-4 space-y-2">
+                        <a :href="calendarUrl" target="_blank" rel="noopener noreferrer" class="block">
+                            <Button variant="outline" class="w-full">
+                                <Calendar class="mr-2 h-4 w-4" />
+                                Dodaj do kalendarza
+                            </Button>
+                        </a>
                         <Link :href="route('events.show', registration.event.slug)">
                             <Button variant="outline" class="w-full">Szczegóły wydarzenia</Button>
                         </Link>

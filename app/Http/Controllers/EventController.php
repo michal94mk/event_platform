@@ -78,6 +78,10 @@ class EventController extends Controller
         $showingMine = $request->user() && ($request->user()->isOrganizer() || $request->user()->isAdmin()) && $request->boolean('mine');
 
         $filters = $request->only(['search', 'city', 'category', 'price', 'sort']);
+        $view = $request->string('view')->toString() ?: 'list';
+        if (! in_array($view, ['list', 'calendar'], true)) {
+            $view = 'list';
+        }
 
         return Inertia::render('events/Index', [
             'events' => $events,
@@ -85,7 +89,74 @@ class EventController extends Controller
             'showingMine' => $showingMine,
             'filters' => $filters,
             'categories' => EventCategory::orderBy('name')->get(['id', 'name', 'slug']),
+            'view' => $view,
         ]);
+    }
+
+    public function calendar(Request $request)
+    {
+        $start = $request->date('start') ?? now()->startOfMonth();
+        $end = $request->date('end') ?? now()->endOfMonth();
+
+        $query = Event::query()
+            ->select('id', 'title', 'slug', 'start_date', 'end_date', 'venue_name', 'venue_city')
+            ->whereBetween('start_date', [$start, $end])
+            ->orderBy('start_date');
+
+        if ($request->user()) {
+            if ($request->user()->isOrganizer() || $request->user()->isAdmin()) {
+                if ($request->boolean('mine')) {
+                    $query->where('user_id', $request->user()->id);
+                } else {
+                    $query->where('status', 'published');
+                }
+            } else {
+                $query->where('status', 'published');
+            }
+        } else {
+            $query->where('status', 'published');
+        }
+
+        if ($search = $request->string('search')->toString()) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('venue_name', 'like', "%{$search}%")
+                    ->orWhere('venue_city', 'like', "%{$search}%");
+            });
+        }
+
+        if ($city = $request->string('city')->toString()) {
+            $query->where('venue_city', 'like', "%{$city}%");
+        }
+
+        if ($category = $request->string('category')->toString()) {
+            $query->whereHas('categories', fn ($q) => $q->where('slug', $category));
+        }
+
+        if ($price = $request->string('price')->toString()) {
+            if ($price === 'free') {
+                $query->where(function ($q) {
+                    $q->whereNull('ticket_price')->orWhere('ticket_price', 0);
+                });
+            } elseif ($price === 'paid') {
+                $query->where('ticket_price', '>', 0);
+            }
+        }
+
+        $events = $query->get();
+
+        return response()->json(
+            $events->map(fn ($event) => [
+                'id' => $event->id,
+                'title' => $event->title,
+                'start' => $event->start_date->toIso8601String(),
+                'end' => ($event->end_date ?? $event->start_date)->toIso8601String(),
+                'url' => route('events.show', $event->slug),
+                'extendedProps' => [
+                    'venue' => trim(implode(', ', array_filter([$event->venue_name, $event->venue_city]))),
+                ],
+            ])
+        );
     }
 
     public function create()
