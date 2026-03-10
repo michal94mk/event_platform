@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RegistrationController extends Controller
 {
@@ -155,6 +156,51 @@ class RegistrationController extends Controller
         ]);
 
         return back()->with('success', 'Check-in wykonany: '.$registration->first_name.' '.$registration->last_name);
+    }
+
+    public function exportCsv(Request $request, Event $event): StreamedResponse
+    {
+        if ($event->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        $registrations = $event->registrations()->orderBy('first_name')->orderBy('last_name')->get();
+
+        $filename = Str::slug($event->title).'-uczestnicy-'.now()->format('Y-m-d').'.csv';
+
+        return response()->streamDownload(function () use ($registrations) {
+            $handle = fopen('php://output', 'w');
+
+            $bom = "\xEF\xBB\xBF";
+            fwrite($handle, $bom);
+
+            fputcsv($handle, [
+                'Imię',
+                'Nazwisko',
+                'Email',
+                'Telefon',
+                'Liczba biletów',
+                'Status',
+                'Data check-in',
+            ], ';');
+
+            foreach ($registrations as $r) {
+                fputcsv($handle, [
+                    $r->first_name,
+                    $r->last_name,
+                    $r->email,
+                    $r->phone ?? '',
+                    $r->ticket_quantity,
+                    $r->checked_in ? 'Odhaczono' : 'Oczekuje',
+                    $r->checked_in_at ? $r->checked_in_at->format('Y-m-d H:i') : '',
+                ], ';');
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+        ]);
     }
 
     public function destroy(Request $request, Registration $registration)

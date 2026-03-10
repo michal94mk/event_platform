@@ -34,6 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
     Route::get('events/{event}/check-in', [RegistrationController::class, 'checkInPage'])->name('events.check-in.page');
     Route::post('events/{event}/check-in', [RegistrationController::class, 'checkIn'])->name('events.check-in');
+    Route::get('events/{event}/registrations/export', [RegistrationController::class, 'exportCsv'])->name('events.registrations.export');
     Route::get('registrations', [RegistrationController::class, 'index'])->name('registrations.index');
     Route::delete('registrations/{registration}', [RegistrationController::class, 'destroy'])->name('registrations.destroy');
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');

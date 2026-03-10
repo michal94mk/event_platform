@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { LoaderCircle } from 'lucide-vue-next';
+import { Download, LoaderCircle } from 'lucide-vue-next';
 
 interface Event {
     id: number;
@@ -79,8 +79,14 @@ const submitCheckIn = () => {
             </Card>
 
             <Card>
-                <CardHeader>
+                <CardHeader class="flex flex-row items-center justify-between gap-4">
                     <CardTitle>Lista uczestników ({{ registrations.length }})</CardTitle>
+                    <a :href="route('events.registrations.export', event.slug)">
+                        <Button variant="outline" size="sm">
+                            <Download class="mr-2 h-4 w-4" />
+                            Eksportuj CSV
+                        </Button>
+                    </a>
                 </CardHeader>
                 <CardContent>
                     <ul class="divide-y">

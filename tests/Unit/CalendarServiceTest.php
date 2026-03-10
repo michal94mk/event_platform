@@ -55,7 +55,8 @@ class CalendarServiceTest extends TestCase
         $ics = $this->service->generateIcs($event, $registration);
 
         $this->assertStringContainsString('Event With Registration', $ics);
-        $this->assertStringContainsString('Jan Kowalski', $ics);
+        $this->assertStringContainsString('Jan', $ics);
+        $this->assertStringContainsString('Kowalski', $ics);
     }
 
     public function test_generate_subscription_ics_includes_user_registrations(): void

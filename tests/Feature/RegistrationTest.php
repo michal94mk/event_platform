@@ -303,6 +303,37 @@ class RegistrationTest extends TestCase
             ->assertSessionHas('info');
     }
 
+    public function test_organizer_can_export_registrations_as_csv(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $event = Event::factory()->published()->create(['user_id' => $organizer->id]);
+        Registration::factory()->create([
+            'event_id' => $event->id,
+            'first_name' => 'Jan',
+            'last_name' => 'Kowalski',
+            'email' => 'jan@example.com',
+        ]);
+
+        $response = $this->actingAs($organizer)
+            ->get(route('events.registrations.export', $event->slug));
+
+        $response->assertOk()
+            ->assertHeader('Content-Type', 'text/csv; charset=UTF-8');
+        $this->assertStringContainsString('Jan', $response->streamedContent());
+        $this->assertStringContainsString('Kowalski', $response->streamedContent());
+        $this->assertStringContainsString('jan@example.com', $response->streamedContent());
+    }
+
+    public function test_non_owner_cannot_export_registrations(): void
+    {
+        $event = Event::factory()->published()->create();
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('events.registrations.export', $event->slug))
+            ->assertForbidden();
+    }
+
     public function test_non_owner_cannot_perform_check_in(): void
     {
         $event = Event::factory()->create();
