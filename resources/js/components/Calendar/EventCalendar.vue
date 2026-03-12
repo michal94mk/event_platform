@@ -63,7 +63,9 @@ const calendarOptions = computed(() => ({
 </script>
 
 <template>
-    <div class="rounded-2xl border border-[#19140035] bg-white p-4 dark:border-[#3E3E3A] dark:bg-[#161615]">
-        <FullCalendar :options="calendarOptions" />
+    <div class="overflow-x-auto rounded-2xl border border-[#19140035] bg-white p-2 sm:p-4 dark:border-[#3E3E3A] dark:bg-[#161615]">
+        <div class="min-w-[280px]">
+            <FullCalendar :options="calendarOptions" />
+        </div>
     </div>
 </template>

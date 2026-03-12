@@ -45,9 +45,9 @@ const submitCheckIn = () => {
 
     <div class="min-h-screen bg-[#FDFDFC] dark:bg-[#0a0a0a]">
         <header class="border-b border-[#19140035] px-4 py-3 dark:border-[#3E3E3A]">
-            <nav class="mx-auto flex max-w-4xl items-center justify-between">
+            <nav class="mx-auto flex max-w-4xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
-                <div class="flex gap-4">
+                <div class="flex flex-wrap gap-3 sm:gap-4">
                     <Link :href="route('events.show', event.slug)" class="text-sm hover:underline">Wydarzenie</Link>
                     <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
                     <Link :href="route('dashboard')" class="text-sm hover:underline">Dashboard</Link>
@@ -64,13 +64,13 @@ const submitCheckIn = () => {
                     <CardTitle>Odhacz wejście</CardTitle>
                 </CardHeader>
                 <CardContent>
-                    <form @submit.prevent="submitCheckIn" class="flex gap-2">
-                        <div class="grid flex-1 gap-1">
+                    <form @submit.prevent="submitCheckIn" class="flex flex-col gap-3 sm:flex-row sm:gap-2">
+                        <div class="grid min-w-0 flex-1 gap-1">
                             <Label for="qr_code" class="sr-only">Kod QR</Label>
                             <Input id="qr_code" v-model="form.qr_code" placeholder="Wklej lub wpisz kod z biletu" class="font-mono" />
                             <InputError :message="form.errors.qr_code" />
                         </div>
-                        <Button type="submit" :disabled="form.processing">
+                        <Button type="submit" :disabled="form.processing" class="shrink-0">
                             <LoaderCircle v-if="form.processing" class="h-4 w-4 animate-spin" />
                             Check-in
                         </Button>
@@ -79,11 +79,11 @@ const submitCheckIn = () => {
             </Card>
 
             <Card>
-                <CardHeader class="flex flex-row items-center justify-between gap-4">
+                <CardHeader class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <CardTitle>Lista uczestników ({{ registrations.length }})</CardTitle>
-                    <a :href="route('events.registrations.export', event.slug)">
-                        <Button variant="outline" size="sm">
-                            <Download class="mr-2 h-4 w-4" />
+                    <a :href="route('events.registrations.export', event.slug)" class="w-fit">
+                        <Button variant="outline" size="sm" class="w-full sm:w-auto">
+                            <Download class="mr-2 h-4 w-4 shrink-0" />
                             Eksportuj CSV
                         </Button>
                     </a>
@@ -93,7 +93,7 @@ const submitCheckIn = () => {
                         <li
                             v-for="r in registrations"
                             :key="r.id"
-                            class="flex items-center justify-between py-3"
+                            class="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between"
                             :class="{ 'text-muted-foreground': r.checked_in }"
                         >
                             <span>{{ r.first_name }} {{ r.last_name }}</span>
