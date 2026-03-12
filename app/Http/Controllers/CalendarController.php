@@ -25,7 +25,7 @@ class CalendarController extends Controller
         $filename = $this->sanitizeFilename($event->title).'.ics';
 
         return response()->streamDownload(
-            fn () => print($ics),
+            fn () => print ($ics),
             $filename,
             [
                 'Content-Type' => 'text/calendar; charset=utf-8',
@@ -50,7 +50,7 @@ class CalendarController extends Controller
         $filename = $this->sanitizeFilename($registration->event->title).'.ics';
 
         return response()->streamDownload(
-            fn () => print($ics),
+            fn () => print ($ics),
             $filename,
             [
                 'Content-Type' => 'text/calendar; charset=utf-8',
@@ -75,7 +75,7 @@ class CalendarController extends Controller
         $ics = $this->calendarService->generateSubscriptionIcs($subscription->user);
 
         return response()->streamDownload(
-            fn () => print($ics),
+            fn () => print ($ics),
             'event-platform-subscription.ics',
             [
                 'Content-Type' => 'text/calendar; charset=utf-8',

@@ -2,8 +2,7 @@
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SidebarTrigger } from '@/components/ui/sidebar';
-import type { BreadcrumbItemType } from '@/types';
-import type { NotificationRecent } from '@/types';
+import type { BreadcrumbItemType, NotificationRecent } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Bell } from 'lucide-vue-next';
 
@@ -70,9 +69,7 @@ function notificationUrl(n: NotificationRecent): string {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" class="w-80 rounded-lg">
                     <div class="border-b px-3 py-2 font-medium">Powiadomienia</div>
-                    <div v-if="recent.length === 0" class="px-3 py-4 text-center text-sm text-muted-foreground">
-                        Brak nowych powiadomień.
-                    </div>
+                    <div v-if="recent.length === 0" class="px-3 py-4 text-center text-sm text-muted-foreground">Brak nowych powiadomień.</div>
                     <template v-else>
                         <Link
                             v-for="n in recent"

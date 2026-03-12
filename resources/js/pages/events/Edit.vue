@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import InputError from '@/components/InputError.vue';
-import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { LoaderCircle } from 'lucide-vue-next';
 
@@ -133,7 +133,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium"
                                 @change="form.cover_image = ($event.target as HTMLInputElement).files?.[0] ?? null"
                             />
-                            <p class="text-xs text-muted-foreground">{{ event.cover_image_url ? 'Wybierz nowe zdjęcie, aby zastąpić' : 'JPEG, PNG, WebP, max 2 MB' }}</p>
+                            <p class="text-xs text-muted-foreground">
+                                {{ event.cover_image_url ? 'Wybierz nowe zdjęcie, aby zastąpić' : 'JPEG, PNG, WebP, max 2 MB' }}
+                            </p>
                             <InputError :message="form.errors.cover_image" />
                         </div>
 

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import InputError from '@/components/InputError.vue';
-import { type BreadcrumbItem } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/AppLayout.vue';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
 import { Calendar, LoaderCircle } from 'lucide-vue-next';
 
@@ -73,12 +73,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto max-w-2xl">
             <Card>
-                <img
-                    v-if="event.cover_image_url"
-                    :src="event.cover_image_url"
-                    :alt="event.title"
-                    class="h-48 w-full rounded-t-lg object-cover"
-                />
+                <img v-if="event.cover_image_url" :src="event.cover_image_url" :alt="event.title" class="h-48 w-full rounded-t-lg object-cover" />
                 <CardHeader class="flex flex-row items-start justify-between gap-4">
                     <div>
                         <span
@@ -150,7 +145,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
                     </dl>
 
-                    <div v-if="registerDisabledReason" class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+                    <div
+                        v-if="registerDisabledReason"
+                        class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+                    >
                         {{ registerDisabledReason }}
                     </div>
                     <div v-else-if="canRegister" class="rounded-lg border bg-muted/30 p-4">
@@ -191,12 +189,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </div>
 
                     <div class="flex flex-wrap gap-2 pt-4">
-                        <a
-                            v-if="event.status === 'published'"
-                            :href="route('events.calendar', event.slug)"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
+                        <a v-if="event.status === 'published'" :href="route('events.calendar', event.slug)" target="_blank" rel="noopener noreferrer">
                             <Button variant="outline" size="sm">
                                 <Calendar class="mr-2 h-4 w-4" />
                                 Dodaj do kalendarza

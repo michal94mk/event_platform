@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowRight, Calendar, Plus, Ticket } from 'lucide-vue-next';
@@ -52,12 +52,8 @@ function formatDate(dateStr: string) {
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-6 p-4">
             <div>
-                <h1 class="text-2xl font-semibold">
-                    Cześć{{ $page.props.auth?.user?.name ? `, ${$page.props.auth.user.name}` : '' }}!
-                </h1>
-                <p class="mt-1 text-muted-foreground">
-                    Oto podsumowanie Twojej aktywności na platformie.
-                </p>
+                <h1 class="text-2xl font-semibold">Cześć{{ $page.props.auth?.user?.name ? `, ${$page.props.auth.user.name}` : '' }}!</h1>
+                <p class="mt-1 text-muted-foreground">Oto podsumowanie Twojej aktywności na platformie.</p>
             </div>
 
             <!-- Quick links -->
@@ -86,9 +82,7 @@ function formatDate(dateStr: string) {
             <div v-if="organizerStats" class="grid gap-4 sm:grid-cols-2">
                 <Card>
                     <CardHeader class="pb-2">
-                        <CardTitle class="text-base font-medium text-muted-foreground">
-                            Twoje wydarzenia
-                        </CardTitle>
+                        <CardTitle class="text-base font-medium text-muted-foreground"> Twoje wydarzenia </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p class="text-3xl font-bold">{{ organizerStats.eventsCount }}</p>
@@ -104,15 +98,11 @@ function formatDate(dateStr: string) {
                 </Card>
                 <Card>
                     <CardHeader class="pb-2">
-                        <CardTitle class="text-base font-medium text-muted-foreground">
-                            Łącznie uczestników
-                        </CardTitle>
+                        <CardTitle class="text-base font-medium text-muted-foreground"> Łącznie uczestników </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p class="text-3xl font-bold">{{ organizerStats.registrationsCount }}</p>
-                        <p class="mt-1 text-sm text-muted-foreground">
-                            Na wszystkich Twoich wydarzeniach
-                        </p>
+                        <p class="mt-1 text-sm text-muted-foreground">Na wszystkich Twoich wydarzeniach</p>
                     </CardContent>
                 </Card>
             </div>
@@ -126,14 +116,9 @@ function formatDate(dateStr: string) {
                     </Link>
                 </CardHeader>
                 <CardContent>
-                    <div
-                        v-if="upcomingRegistrations.length === 0"
-                        class="rounded-lg border border-dashed p-8 text-center text-muted-foreground"
-                    >
+                    <div v-if="upcomingRegistrations.length === 0" class="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
                         Nie masz jeszcze rejestracji na nadchodzące wydarzenia.
-                        <Link :href="route('events.index')" class="mt-2 block text-primary hover:underline">
-                            Przeglądaj wydarzenia →
-                        </Link>
+                        <Link :href="route('events.index')" class="mt-2 block text-primary hover:underline"> Przeglądaj wydarzenia → </Link>
                     </div>
                     <ul v-else class="space-y-3">
                         <li

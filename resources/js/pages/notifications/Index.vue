@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Bell } from 'lucide-vue-next';
@@ -29,9 +29,7 @@ interface NotificationsPaginated {
     links: PaginationLink[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Powiadomienia', href: '/notifications' },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Powiadomienia', href: '/notifications' }];
 
 defineProps<{
     notifications: NotificationsPaginated;
@@ -67,9 +65,7 @@ function formatDate(iso: string) {
         <div class="flex h-full flex-1 flex-col gap-6 p-4">
             <div>
                 <h1 class="text-2xl font-semibold">Powiadomienia</h1>
-                <p class="mt-1 text-muted-foreground">
-                    Tutaj znajdziesz informacje o nowych rejestracjach i anulowaniach na Twoje wydarzenia.
-                </p>
+                <p class="mt-1 text-muted-foreground">Tutaj znajdziesz informacje o nowych rejestracjach i anulowaniach na Twoje wydarzenia.</p>
             </div>
 
             <Card v-if="notifications.data.length === 0">
@@ -91,18 +87,9 @@ function formatDate(iso: string) {
                                 </div>
                                 <div class="flex shrink-0 gap-2">
                                     <Link v-if="n.data?.event_slug" :href="notificationUrl(n)">
-                                        <Button variant="outline" size="sm" @click="markAsRead(n)">
-                                            Zobacz wydarzenie
-                                        </Button>
+                                        <Button variant="outline" size="sm" @click="markAsRead(n)"> Zobacz wydarzenie </Button>
                                     </Link>
-                                    <Button
-                                        v-if="!n.read_at"
-                                        variant="ghost"
-                                        size="sm"
-                                        @click="markAsRead(n)"
-                                    >
-                                        Oznacz jako przeczytane
-                                    </Button>
+                                    <Button v-if="!n.read_at" variant="ghost" size="sm" @click="markAsRead(n)"> Oznacz jako przeczytane </Button>
                                 </div>
                             </div>
                         </CardContent>

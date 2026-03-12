@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Search } from 'lucide-vue-next';
@@ -45,10 +45,14 @@ const search = ref(props.filters?.search ?? '');
 const roleFilter = ref(props.filters?.role ?? '');
 
 function applyFilters() {
-    router.get(route('admin.users.index'), {
-        search: search.value || undefined,
-        role: roleFilter.value || undefined,
-    }, { preserveState: true });
+    router.get(
+        route('admin.users.index'),
+        {
+            search: search.value || undefined,
+            role: roleFilter.value || undefined,
+        },
+        { preserveState: true },
+    );
 }
 
 function roleLabel(role: string | null): string {
@@ -76,26 +80,15 @@ function formatDate(iso: string) {
         <div class="flex h-full flex-1 flex-col gap-6 p-4">
             <div>
                 <h1 class="text-2xl font-semibold">Użytkownicy</h1>
-                <p class="mt-1 text-muted-foreground">
-                    Lista wszystkich użytkowników platformy.
-                </p>
+                <p class="mt-1 text-muted-foreground">Lista wszystkich użytkowników platformy.</p>
             </div>
 
             <div class="flex flex-wrap gap-4">
-                <div class="relative flex-1 min-w-[200px]">
+                <div class="relative min-w-[200px] flex-1">
                     <Search class="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                        v-model="search"
-                        placeholder="Szukaj po nazwie lub e-mailu..."
-                        class="pl-9"
-                        @keyup.enter="applyFilters"
-                    />
+                    <Input v-model="search" placeholder="Szukaj po nazwie lub e-mailu..." class="pl-9" @keyup.enter="applyFilters" />
                 </div>
-                <select
-                    v-model="roleFilter"
-                    class="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm"
-                    @change="applyFilters"
-                >
+                <select v-model="roleFilter" class="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm" @change="applyFilters">
                     <option value="">Wszystkie role</option>
                     <option value="none">Uczestnik</option>
                     <option value="organizer">Organizator</option>
@@ -106,12 +99,7 @@ function formatDate(iso: string) {
 
             <Card>
                 <CardContent class="p-0">
-                    <div
-                        v-if="users.data.length === 0"
-                        class="p-8 text-center text-muted-foreground"
-                    >
-                        Brak użytkowników spełniających kryteria.
-                    </div>
+                    <div v-if="users.data.length === 0" class="p-8 text-center text-muted-foreground">Brak użytkowników spełniających kryteria.</div>
                     <div v-else class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
@@ -124,11 +112,7 @@ function formatDate(iso: string) {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
-                                    v-for="u in users.data"
-                                    :key="u.id"
-                                    class="border-b transition-colors hover:bg-muted/30"
-                                >
+                                <tr v-for="u in users.data" :key="u.id" class="border-b transition-colors hover:bg-muted/30">
                                     <td class="px-4 py-3">
                                         <p class="font-medium">{{ u.name }}</p>
                                         <p class="text-muted-foreground">{{ u.email }}</p>

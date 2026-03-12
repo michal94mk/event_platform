@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
 import { Calendar, Ticket, Users } from 'lucide-vue-next';
@@ -16,9 +16,7 @@ interface Event {
     created_at: string;
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Panel admina', href: '/admin' },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Panel admina', href: '/admin' }];
 
 defineProps<{
     stats: {
@@ -57,9 +55,7 @@ function statusLabel(status: string): string {
         <div class="flex h-full flex-1 flex-col gap-6 p-4">
             <div>
                 <h1 class="text-2xl font-semibold">Panel admina</h1>
-                <p class="mt-1 text-muted-foreground">
-                    Statystyki platformy i zarządzanie treścią.
-                </p>
+                <p class="mt-1 text-muted-foreground">Statystyki platformy i zarządzanie treścią.</p>
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -73,9 +69,7 @@ function statusLabel(status: string): string {
                     <CardContent>
                         <p class="text-3xl font-bold">{{ stats.usersCount }}</p>
                         <Link :href="route('admin.users.index')">
-                            <Button variant="link" class="h-auto p-0 text-primary">
-                                Zobacz listę →
-                            </Button>
+                            <Button variant="link" class="h-auto p-0 text-primary"> Zobacz listę → </Button>
                         </Link>
                     </CardContent>
                 </Card>
@@ -88,9 +82,7 @@ function statusLabel(status: string): string {
                     </CardHeader>
                     <CardContent>
                         <p class="text-3xl font-bold">{{ stats.eventsCount }}</p>
-                        <p class="text-sm text-muted-foreground">
-                            {{ stats.publishedEventsCount }} opublikowanych
-                        </p>
+                        <p class="text-sm text-muted-foreground">{{ stats.publishedEventsCount }} opublikowanych</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -106,9 +98,7 @@ function statusLabel(status: string): string {
                 </Card>
                 <Card>
                     <CardHeader class="pb-2">
-                        <CardTitle class="text-base font-medium text-muted-foreground">
-                            Organizatorzy
-                        </CardTitle>
+                        <CardTitle class="text-base font-medium text-muted-foreground"> Organizatorzy </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p class="text-3xl font-bold">{{ stats.organizersCount }}</p>
@@ -116,15 +106,11 @@ function statusLabel(status: string): string {
                 </Card>
                 <Card>
                     <CardHeader class="pb-2">
-                        <CardTitle class="text-base font-medium text-muted-foreground">
-                            Kategorie
-                        </CardTitle>
+                        <CardTitle class="text-base font-medium text-muted-foreground"> Kategorie </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <Link :href="route('admin.categories.index')">
-                            <Button variant="link" class="h-auto p-0 text-primary">
-                                Zarządzaj kategoriami →
-                            </Button>
+                            <Button variant="link" class="h-auto p-0 text-primary"> Zarządzaj kategoriami → </Button>
                         </Link>
                     </CardContent>
                 </Card>
@@ -138,10 +124,7 @@ function statusLabel(status: string): string {
                     </Link>
                 </CardHeader>
                 <CardContent>
-                    <div
-                        v-if="recentEvents.length === 0"
-                        class="rounded-lg border border-dashed p-8 text-center text-muted-foreground"
-                    >
+                    <div v-if="recentEvents.length === 0" class="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
                         Brak wydarzeń na platformie.
                     </div>
                     <ul v-else class="space-y-3">
@@ -152,9 +135,7 @@ function statusLabel(status: string): string {
                         >
                             <div class="min-w-0 flex-1">
                                 <p class="font-medium">{{ e.title }}</p>
-                                <p class="text-sm text-muted-foreground">
-                                    {{ e.user?.name }} · {{ formatDate(e.start_date) }}
-                                </p>
+                                <p class="text-sm text-muted-foreground">{{ e.user?.name }} · {{ formatDate(e.start_date) }}</p>
                             </div>
                             <div class="flex shrink-0 items-center gap-2">
                                 <span

@@ -15,9 +15,7 @@ defineProps<{
     subscriptionUrl: string;
 }>();
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Subskrypcja kalendarza', href: '/settings/calendar' },
-];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Subskrypcja kalendarza', href: '/settings/calendar' }];
 
 const copied = ref(false);
 
@@ -58,13 +56,7 @@ async function copyToClipboard(url: string) {
                 <div class="space-y-2">
                     <Label for="subscription-url">Link do subskrypcji</Label>
                     <div class="flex gap-2">
-                        <Input
-                            id="subscription-url"
-                            :model-value="subscriptionUrl"
-                            type="text"
-                            readonly
-                            class="font-mono text-sm"
-                        />
+                        <Input id="subscription-url" :model-value="subscriptionUrl" type="text" readonly class="font-mono text-sm" />
                         <Button
                             type="button"
                             variant="outline"
@@ -76,23 +68,15 @@ async function copyToClipboard(url: string) {
                             <Copy v-else class="h-4 w-4" />
                         </Button>
                     </div>
-                    <p v-if="copied" class="text-sm text-green-600 dark:text-green-400">
-                        Skopiowano do schowka
-                    </p>
+                    <p v-if="copied" class="text-sm text-green-600 dark:text-green-400">Skopiowano do schowka</p>
                 </div>
 
                 <div class="rounded-lg border bg-muted/50 p-4 text-sm text-muted-foreground">
                     <p class="font-medium text-foreground">Jak dodać subskrypcję?</p>
                     <ul class="mt-2 list-inside list-disc space-y-1">
-                        <li>
-                            <strong>Google Calendar:</strong> Ustawienia → Dodaj kalendarz → Z adresu URL → wklej link
-                        </li>
-                        <li>
-                            <strong>Outlook:</strong> Kalendarz → Dodaj kalendarz → Subskrybuj z sieci Web → wklej link
-                        </li>
-                        <li>
-                            <strong>Apple Calendar:</strong> Plik → Nowa subskrypcja kalendarza → wklej link
-                        </li>
+                        <li><strong>Google Calendar:</strong> Ustawienia → Dodaj kalendarz → Z adresu URL → wklej link</li>
+                        <li><strong>Outlook:</strong> Kalendarz → Dodaj kalendarz → Subskrybuj z sieci Web → wklej link</li>
+                        <li><strong>Apple Calendar:</strong> Plik → Nowa subskrypcja kalendarza → wklej link</li>
                     </ul>
                 </div>
 

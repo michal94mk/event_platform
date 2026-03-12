@@ -15,8 +15,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
-import type { BreadcrumbItem as BreadcrumbItemType, NavItem } from '@/types';
-import type { NotificationRecent } from '@/types';
+import type { BreadcrumbItem as BreadcrumbItemType, NavItem, NotificationRecent } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import { Bell, Calendar, LayoutGrid, Menu, Shield, Ticket } from 'lucide-vue-next';
 import { computed } from 'vue';
@@ -39,9 +38,7 @@ const recent = computed(() => notifications.value?.recent ?? []);
 
 const mainNavItems = computed<NavItem[]>(() => {
     if (!isLoggedIn.value) {
-        return [
-            { title: 'Wydarzenia', href: '/events', icon: Calendar },
-        ];
+        return [{ title: 'Wydarzenia', href: '/events', icon: Calendar }];
     }
     const items: NavItem[] = [
         { title: 'Dashboard', href: '/dashboard', icon: LayoutGrid },
@@ -57,9 +54,7 @@ const mainNavItems = computed<NavItem[]>(() => {
 
 const isCurrentRoute = (url: string) => page.url.startsWith(url) || (url === '/dashboard' && page.url === '/');
 
-const activeItemStyles = computed(
-    () => (url: string) => (isCurrentRoute(url) ? 'bg-accent text-accent-foreground' : ''),
-);
+const activeItemStyles = computed(() => (url: string) => (isCurrentRoute(url) ? 'bg-accent text-accent-foreground' : ''));
 
 function notificationUrl(n: NotificationRecent): string {
     if (n.data?.event_slug) {
@@ -126,18 +121,10 @@ function notificationUrl(n: NotificationRecent): string {
                 <div class="hidden h-full lg:flex lg:flex-1">
                     <NavigationMenu class="ml-10 flex h-full items-stretch">
                         <NavigationMenuList class="flex h-full items-stretch space-x-1">
-                            <NavigationMenuItem
-                                v-for="(item, index) in mainNavItems"
-                                :key="index"
-                                class="relative flex h-full items-center"
-                            >
+                            <NavigationMenuItem v-for="(item, index) in mainNavItems" :key="index" class="relative flex h-full items-center">
                                 <Link :href="item.href">
                                     <NavigationMenuLink
-                                        :class="[
-                                            navigationMenuTriggerStyle(),
-                                            activeItemStyles(item.href),
-                                            'h-9 cursor-pointer px-3',
-                                        ]"
+                                        :class="[navigationMenuTriggerStyle(), activeItemStyles(item.href), 'h-9 cursor-pointer px-3']"
                                     >
                                         <component v-if="item.icon" :is="item.icon" class="mr-2 h-4 w-4" />
                                         {{ item.title }}

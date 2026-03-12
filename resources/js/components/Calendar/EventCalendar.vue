@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import FullCalendar from '@fullcalendar/vue3';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
 import plLocale from '@fullcalendar/core/locales/pl';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import FullCalendar from '@fullcalendar/vue3';
 import { computed } from 'vue';
 
 interface Filters {
@@ -22,7 +22,7 @@ const props = withDefaults(
     {
         filters: () => ({}),
         mine: false,
-    }
+    },
 );
 
 const eventSources = computed(() => [

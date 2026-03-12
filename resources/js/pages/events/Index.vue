@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import EventCalendar from '@/components/Calendar/EventCalendar.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Calendar, CalendarDays, List } from 'lucide-vue-next';
@@ -148,9 +148,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <button
                     type="button"
                     class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition"
-                    :class="currentView === 'list'
-                        ? 'bg-primary text-white'
-                        : 'bg-white text-[#706f6c] hover:bg-[#19140008] dark:bg-[#161615] dark:text-[#A1A09A] dark:hover:bg-[#27272a]'"
+                    :class="
+                        currentView === 'list'
+                            ? 'bg-primary text-white'
+                            : 'bg-white text-[#706f6c] hover:bg-[#19140008] dark:bg-[#161615] dark:text-[#A1A09A] dark:hover:bg-[#27272a]'
+                    "
                     @click="setView('list')"
                 >
                     <List class="h-4 w-4" />
@@ -159,9 +161,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                 <button
                     type="button"
                     class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition"
-                    :class="currentView === 'calendar'
-                        ? 'bg-primary text-white'
-                        : 'bg-white text-[#706f6c] hover:bg-[#19140008] dark:bg-[#161615] dark:text-[#A1A09A] dark:hover:bg-[#27272a]'"
+                    :class="
+                        currentView === 'calendar'
+                            ? 'bg-primary text-white'
+                            : 'bg-white text-[#706f6c] hover:bg-[#19140008] dark:bg-[#161615] dark:text-[#A1A09A] dark:hover:bg-[#27272a]'
+                    "
                     @click="setView('calendar')"
                 >
                     <CalendarDays class="h-4 w-4" />
@@ -209,11 +213,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         class="block w-full rounded-lg border border-[#19140035] bg-white px-3 py-2 text-sm text-[#1b1b18] outline-none ring-0 transition focus:border-[#19140080] focus:ring-2 focus:ring-[#19140010] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:focus:border-[#e4e4e7] dark:focus:ring-[#27272a]"
                     >
                         <option value="">Wszystkie</option>
-                        <option
-                            v-for="category in categories"
-                            :key="category.id"
-                            :value="category.slug"
-                        >
+                        <option v-for="category in categories" :key="category.id" :value="category.slug">
                             {{ category.name }}
                         </option>
                     </select>
@@ -292,26 +292,16 @@ const breadcrumbs: BreadcrumbItem[] = [
             </div>
 
             <ul v-else-if="currentView === 'list'" class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <li
-                    v-for="event in events.data"
-                    :key="event.id"
-                    class="flex"
-                >
+                <li v-for="event in events.data" :key="event.id" class="flex">
                     <Link
                         :href="route('events.show', event.slug)"
-                        class="flex w-full flex-col overflow-hidden rounded-2xl border border-[#19140035] bg-white shadow-sm transition-all hover:shadow-lg hover:border-[#19140050] dark:border-[#3E3E3A] dark:bg-[#161615] dark:hover:border-[#52524e]"
+                        class="flex w-full flex-col overflow-hidden rounded-2xl border border-[#19140035] bg-white shadow-sm transition-all hover:border-[#19140050] hover:shadow-lg dark:border-[#3E3E3A] dark:bg-[#161615] dark:hover:border-[#52524e]"
                     >
-                        <div class="relative aspect-[16/9] min-h-[140px] shrink-0 overflow-hidden bg-gradient-to-br from-[#19140008] via-[#19140012] to-[#19140008] dark:from-[#27272a] dark:via-[#3f3f46] dark:to-[#27272a]">
-                            <img
-                                v-if="event.cover_image_url"
-                                :src="event.cover_image_url"
-                                :alt="event.title"
-                                class="h-full w-full object-cover"
-                            />
-                            <div
-                                v-else
-                                class="flex h-full w-full flex-col items-center justify-center gap-2 text-[#706f6c] dark:text-[#A1A09A]"
-                            >
+                        <div
+                            class="relative aspect-[16/9] min-h-[140px] shrink-0 overflow-hidden bg-gradient-to-br from-[#19140008] via-[#19140012] to-[#19140008] dark:from-[#27272a] dark:via-[#3f3f46] dark:to-[#27272a]"
+                        >
+                            <img v-if="event.cover_image_url" :src="event.cover_image_url" :alt="event.title" class="h-full w-full object-cover" />
+                            <div v-else class="flex h-full w-full flex-col items-center justify-center gap-2 text-[#706f6c] dark:text-[#A1A09A]">
                                 <div class="rounded-full bg-white/60 p-4 dark:bg-black/20">
                                     <Calendar class="size-8" stroke-width="1.5" />
                                 </div>
@@ -319,7 +309,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                             </div>
                         </div>
                         <div class="flex flex-1 flex-col p-5">
-                            <h2 class="line-clamp-2 font-semibold text-[#1b1b18] leading-snug hover:underline dark:text-[#EDEDEC]">
+                            <h2 class="line-clamp-2 font-semibold leading-snug text-[#1b1b18] hover:underline dark:text-[#EDEDEC]">
                                 {{ event.title }}
                             </h2>
                             <p class="mt-2 line-clamp-1 text-sm text-[#706f6c] dark:text-[#A1A09A]">
@@ -349,9 +339,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                         v-if="link.url"
                         :href="link.url"
                         class="inline-flex min-w-[2.5rem] items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium transition"
-                        :class="link.active
-                            ? 'border-primary bg-primary text-white'
-                            : 'border-[#19140035] bg-white text-[#1b1b18] hover:bg-[#19140008] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:hover:bg-[#27272a]'"
+                        :class="
+                            link.active
+                                ? 'border-primary bg-primary text-white'
+                                : 'border-[#19140035] bg-white text-[#1b1b18] hover:bg-[#19140008] dark:border-[#3E3E3A] dark:bg-[#161615] dark:text-[#EDEDEC] dark:hover:bg-[#27272a]'
+                        "
                     >
                         <span v-html="link.label" />
                     </Link>
@@ -363,10 +355,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </template>
             </nav>
 
-            <p
-                v-if="currentView === 'list' && events.data.length > 0"
-                class="mt-6 text-center text-sm text-[#706f6c] dark:text-[#A1A09A]"
-            >
+            <p v-if="currentView === 'list' && events.data.length > 0" class="mt-6 text-center text-sm text-[#706f6c] dark:text-[#A1A09A]">
                 Wyświetlono {{ events.from }}–{{ events.to }} z {{ events.total }}
             </p>
         </div>

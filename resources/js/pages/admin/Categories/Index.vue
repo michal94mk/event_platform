@@ -1,20 +1,13 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router, useForm } from '@inertiajs/vue3';
-import { Plus, Pencil, Trash2 } from 'lucide-vue-next';
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 
 interface Category {
@@ -96,9 +89,7 @@ function deleteCategory(c: Category) {
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-2xl font-semibold">Kategorie wydarzeń</h1>
-                    <p class="mt-1 text-muted-foreground">
-                        Zarządzaj kategoriami dostępnymi przy tworzeniu wydarzeń.
-                    </p>
+                    <p class="mt-1 text-muted-foreground">Zarządzaj kategoriami dostępnymi przy tworzeniu wydarzeń.</p>
                 </div>
                 <Button @click="openAdd" class="gap-2">
                     <Plus class="size-4" />
@@ -108,12 +99,7 @@ function deleteCategory(c: Category) {
 
             <Card>
                 <CardContent class="p-0">
-                    <div
-                        v-if="categories.length === 0"
-                        class="p-8 text-center text-muted-foreground"
-                    >
-                        Brak kategorii. Dodaj pierwszą.
-                    </div>
+                    <div v-if="categories.length === 0" class="p-8 text-center text-muted-foreground">Brak kategorii. Dodaj pierwszą.</div>
                     <ul v-else class="divide-y">
                         <li
                             v-for="c in categories"
@@ -127,28 +113,14 @@ function deleteCategory(c: Category) {
                                     {{ c.events_count }} {{ c.events_count === 1 ? 'wydarzenie' : 'wydarzeń' }}
                                 </p>
                             </div>
-                            <form
-                                v-else
-                                class="flex flex-1 flex-wrap items-end gap-4"
-                                @submit.prevent="submitEdit(c.id)"
-                            >
-                                <div class="flex-1 min-w-[200px] space-y-2">
+                            <form v-else class="flex flex-1 flex-wrap items-end gap-4" @submit.prevent="submitEdit(c.id)">
+                                <div class="min-w-[200px] flex-1 space-y-2">
                                     <Label for="edit-name">Nazwa</Label>
-                                    <Input
-                                        id="edit-name"
-                                        v-model="editForm.name"
-                                        required
-                                        class="w-full"
-                                    />
+                                    <Input id="edit-name" v-model="editForm.name" required class="w-full" />
                                 </div>
-                                <div class="flex-1 min-w-[200px] space-y-2">
+                                <div class="min-w-[200px] flex-1 space-y-2">
                                     <Label for="edit-desc">Opis</Label>
-                                    <Input
-                                        id="edit-desc"
-                                        v-model="editForm.description"
-                                        class="w-full"
-                                        placeholder="Opcjonalnie"
-                                    />
+                                    <Input id="edit-desc" v-model="editForm.description" class="w-full" placeholder="Opcjonalnie" />
                                 </div>
                                 <div class="flex gap-2">
                                     <Button type="submit" :disabled="editForm.processing">Zapisz</Button>
@@ -179,36 +151,21 @@ function deleteCategory(c: Category) {
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Dodaj kategorię</DialogTitle>
-                    <DialogDescription>
-                        Nowa kategoria będzie dostępna przy tworzeniu wydarzeń.
-                    </DialogDescription>
+                    <DialogDescription> Nowa kategoria będzie dostępna przy tworzeniu wydarzeń. </DialogDescription>
                 </DialogHeader>
                 <form @submit.prevent="submitAdd" class="space-y-4">
                     <div class="space-y-2">
                         <Label for="add-name">Nazwa</Label>
-                        <Input
-                            id="add-name"
-                            v-model="addForm.name"
-                            required
-                            placeholder="np. Konferencje"
-                        />
+                        <Input id="add-name" v-model="addForm.name" required placeholder="np. Konferencje" />
                         <p v-if="addForm.errors.name" class="text-sm text-destructive">{{ addForm.errors.name }}</p>
                     </div>
                     <div class="space-y-2">
                         <Label for="add-desc">Opis (opcjonalnie)</Label>
-                        <Input
-                            id="add-desc"
-                            v-model="addForm.description"
-                            placeholder="Krótki opis kategorii"
-                        />
+                        <Input id="add-desc" v-model="addForm.description" placeholder="Krótki opis kategorii" />
                     </div>
                     <DialogFooter>
-                        <Button type="button" variant="outline" @click="addDialogOpen = false">
-                            Anuluj
-                        </Button>
-                        <Button type="submit" :disabled="addForm.processing">
-                            Dodaj
-                        </Button>
+                        <Button type="button" variant="outline" @click="addDialogOpen = false"> Anuluj </Button>
+                        <Button type="submit" :disabled="addForm.processing"> Dodaj </Button>
                     </DialogFooter>
                 </form>
             </DialogContent>

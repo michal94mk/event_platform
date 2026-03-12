@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Dialog from '@/components/ui/dialog/Dialog.vue';
@@ -8,6 +7,7 @@ import DialogDescription from '@/components/ui/dialog/DialogDescription.vue';
 import DialogFooter from '@/components/ui/dialog/DialogFooter.vue';
 import DialogHeader from '@/components/ui/dialog/DialogHeader.vue';
 import DialogTitle from '@/components/ui/dialog/DialogTitle.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -128,7 +128,7 @@ function canCancel(registration: Registration): boolean {
                                     v-if="canCancel(r)"
                                     variant="ghost"
                                     size="sm"
-                                    class="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950"
+                                    class="text-xs text-red-600 hover:bg-red-50 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-950"
                                     @click="openCancelDialog(r)"
                                 >
                                     Anuluj udział
@@ -148,15 +148,8 @@ function canCancel(registration: Registration): boolean {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button variant="outline" size="sm" @click="closeDialog">
-                            Anuluj
-                        </Button>
-                        <Button
-                            variant="destructive"
-                            size="sm"
-                            :disabled="!canCancelRegistration"
-                            @click="confirmCancel"
-                        >
+                        <Button variant="outline" size="sm" @click="closeDialog"> Anuluj </Button>
+                        <Button variant="destructive" size="sm" :disabled="!canCancelRegistration" @click="confirmCancel">
                             Potwierdź anulowanie
                         </Button>
                     </DialogFooter>

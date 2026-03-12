@@ -82,6 +82,7 @@ class CalendarService
 
         return $result;
     }
+
     public function generateIcs(Event $event, ?Registration $registration = null): string
     {
         $event->loadMissing('user');
