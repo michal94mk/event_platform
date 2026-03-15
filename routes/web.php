@@ -4,8 +4,10 @@ use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\IntegrationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -37,9 +39,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events/{event}/registrations/export', [RegistrationController::class, 'exportCsv'])->name('events.registrations.export');
     Route::get('registrations', [RegistrationController::class, 'index'])->name('registrations.index');
     Route::delete('registrations/{registration}', [RegistrationController::class, 'destroy'])->name('registrations.destroy');
+    Route::post('registrations/{registration}/refund', [RegistrationController::class, 'refund'])->name('registrations.refund');
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::get('integrations', [IntegrationController::class, 'index'])->name('integrations.index');
+    Route::get('integrations/google-calendar/connect', [IntegrationController::class, 'googleCalendarConnect'])->name('integrations.google-calendar.connect');
+    Route::get('integrations/google-calendar/callback', [IntegrationController::class, 'googleCalendarCallback'])->name('integrations.google-calendar.callback');
+    Route::delete('integrations/{integration}', [IntegrationController::class, 'disconnect'])->name('integrations.destroy');
+    Route::post('integrations/{integration}/test', [IntegrationController::class, 'test'])->name('integrations.test');
+    Route::post('events/{event}/sync-calendar', [IntegrationController::class, 'syncCalendar'])->name('events.sync-calendar');
 });
+
+Route::post('stripe/webhook', StripeWebhookController::class)->name('stripe.webhook');
 
 Route::get('registrations/{registration}', [RegistrationController::class, 'show'])->name('registrations.show');
 Route::get('registrations/{registration}/calendar.ics', [CalendarController::class, 'registration'])->name('registrations.calendar');

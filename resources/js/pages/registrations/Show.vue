@@ -54,10 +54,22 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <p class="text-sm text-muted-foreground">{{ registration.event.title }}</p>
                 </CardHeader>
                 <CardContent class="space-y-4">
-                    <div class="flex justify-center rounded-lg border bg-white p-4 dark:bg-muted">
-                        <QrcodeVue :value="registration.qr_code" :size="200" level="M" />
+                    <div
+                        v-if="registration.payment_status === 'pending' && Number(registration.total_amount) > 0"
+                        class="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200"
+                    >
+                        <p class="font-medium">Oczekujemy na potwierdzenie płatności</p>
+                        <p class="mt-1">Jeśli przekierowano Cię po opłaceniu, odśwież stronę za chwilę. Potwierdzenie wyślemy na adres {{ registration.email }}.</p>
                     </div>
-                    <p class="text-center text-xs text-muted-foreground">Pokaż ten kod QR przy wejściu na wydarzenie</p>
+                    <div v-else-if="registration.payment_status === 'refunded'" class="rounded-lg border border-muted p-4 text-sm text-muted-foreground">
+                        Płatność za tę rejestrację została zwrócona.
+                    </div>
+                    <template v-else>
+                        <div class="flex justify-center rounded-lg border bg-white p-4 dark:bg-muted">
+                            <QrcodeVue :value="registration.qr_code" :size="200" level="M" />
+                        </div>
+                        <p class="text-center text-xs text-muted-foreground">Pokaż ten kod QR przy wejściu na wydarzenie</p>
+                    </template>
 
                     <dl class="grid gap-2 text-sm">
                         <div>
@@ -80,7 +92,13 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </dl>
 
                     <div class="space-y-2 pt-4">
-                        <a :href="calendarUrl" target="_blank" rel="noopener noreferrer" class="block">
+                        <a
+                            v-if="registration.payment_status === 'paid' || Number(registration.total_amount) === 0"
+                            :href="calendarUrl"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="block"
+                        >
                             <Button variant="outline" class="w-full">
                                 <Calendar class="mr-2 h-4 w-4" />
                                 Dodaj do kalendarza

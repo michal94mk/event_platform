@@ -6,6 +6,7 @@ use App\Http\Requests\StoreEventRequest;
 use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\EventCategory;
+use App\Models\Integration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -243,15 +244,21 @@ class EventController extends Controller
         ]);
     }
 
-    public function edit(Event $event)
+    public function edit(Request $request, Event $event)
     {
         $this->authorize('update', $event);
 
         $event->load('categories');
 
+        $hasGoogleCalendar = Integration::where('user_id', $request->user()->id)
+            ->where('provider', Integration::PROVIDER_GOOGLE_CALENDAR)
+            ->where('is_active', true)
+            ->exists();
+
         return Inertia::render('events/Edit', [
             'event' => $event,
             'categories' => EventCategory::orderBy('name')->get(['id', 'name', 'slug']),
+            'hasGoogleCalendar' => $hasGoogleCalendar,
         ]);
     }
 

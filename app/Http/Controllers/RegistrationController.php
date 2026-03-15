@@ -8,6 +8,7 @@ use App\Mail\RegistrationConfirmation;
 use App\Models\Event;
 use App\Models\Registration;
 use App\Models\UserNotification;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -52,6 +53,18 @@ class RegistrationController extends Controller
         ]);
 
         $url = route('registrations.show', ['registration' => $registration->id, 'token' => $registration->qr_code]);
+
+        if (! $isFree) {
+            if (! StripeService::make()->isConfigured()) {
+                return back()->withErrors(['payment' => 'Płatności online nie są obecnie dostępne. Skontaktuj się z organizatorem.']);
+            }
+            $successUrl = $url;
+            $cancelUrl = route('events.show', $event->slug);
+
+            $session = StripeService::make()->createCheckoutSession($registration, $successUrl, $cancelUrl);
+
+            return redirect($session->url);
+        }
 
         $registration->load('event.user');
 
@@ -232,5 +245,28 @@ class RegistrationController extends Controller
         return redirect()
             ->route('registrations.index')
             ->with('success', 'Rejestracja została anulowana.');
+    }
+
+    public function refund(Request $request, Registration $registration)
+    {
+        if ($registration->event->user_id !== $request->user()->id && ! $request->user()->isAdmin()) {
+            abort(403);
+        }
+
+        if ($registration->payment_status !== 'paid' || empty($registration->payment_intent_id)) {
+            return back()->withErrors(['refund' => 'Nie można zwrócić płatności dla tej rejestracji.']);
+        }
+
+        if (! StripeService::make()->isConfigured()) {
+            return back()->withErrors(['refund' => 'Stripe nie jest skonfigurowany.']);
+        }
+
+        if (! StripeService::make()->refund($registration)) {
+            return back()->withErrors(['refund' => 'Nie udało się zrealizować zwrotu.']);
+        }
+
+        $registration->update(['payment_status' => 'refunded']);
+
+        return back()->with('success', 'Zwrot płatności został zrealizowany.');
     }
 }

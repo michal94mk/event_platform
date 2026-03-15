@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, router, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 import { LoaderCircle } from 'lucide-vue-next';
 
 interface Category {
@@ -40,7 +41,10 @@ interface Event {
 const props = defineProps<{
     event: Event;
     categories: Category[];
+    hasGoogleCalendar?: boolean;
 }>();
+
+const syncing = ref(false);
 
 const form = useForm({
     title: props.event.title,
@@ -68,6 +72,14 @@ const submit = () => {
         ticket_price: data.ticket_price === '' ? null : Number(data.ticket_price),
     })).put(route('events.update', props.event.slug), {
         forceFormData: true,
+    });
+};
+
+const syncCalendar = () => {
+    syncing.value = true;
+    router.post(route('events.sync-calendar', props.event.slug), {}, {
+        preserveScroll: true,
+        onFinish: () => { syncing.value = false; },
     });
 };
 
@@ -227,6 +239,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <Link :href="route('events.show', event.slug)">
                                 <Button type="button" variant="outline">Anuluj</Button>
                             </Link>
+                        </div>
+
+                        <div v-if="hasGoogleCalendar" class="mt-6 border-t pt-6">
+                            <p class="mb-2 text-sm text-muted-foreground">Synchronizuj to wydarzenie z Google Calendar</p>
+                            <Button type="button" variant="outline" :disabled="syncing" @click="syncCalendar">
+                                <LoaderCircle v-if="syncing" class="mr-2 h-4 w-4 animate-spin" />
+                                Synchronizuj z Google Calendar
+                            </Button>
                         </div>
                     </form>
                 </CardContent>

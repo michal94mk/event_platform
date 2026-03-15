@@ -4,7 +4,7 @@ import NavUser from '@/components/NavUser.vue';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
-import { Bell, Calendar, LayoutGrid, Shield, Ticket } from 'lucide-vue-next';
+import { Bell, Calendar, LayoutGrid, Plug, Shield, Ticket } from 'lucide-vue-next';
 import { computed } from 'vue';
 import AppLogo from './AppLogo.vue';
 
@@ -16,6 +16,7 @@ const mainNavItems = computed<NavItem[]>(() => {
         { title: 'Wydarzenia', href: '/events', icon: Calendar },
         { title: 'Moje rejestracje', href: '/registrations', icon: Ticket },
         { title: 'Powiadomienia', href: '/notifications', icon: Bell },
+        { title: 'Integracje', href: '/integrations', icon: Plug },
     ];
     if (page.props.auth?.user?.role === 'admin') {
         items.push({ title: 'Panel admina', href: '/admin', icon: Shield });
