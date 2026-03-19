@@ -3,7 +3,7 @@ import EventCalendar from '@/components/Calendar/EventCalendar.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Calendar, CalendarDays, List } from 'lucide-vue-next';
+import { Calendar, CalendarDays, List, Plus } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
 
 interface EventCategory {
@@ -140,9 +140,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto max-w-6xl">
-            <h1 class="mb-8 text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC] sm:text-3xl">
-                {{ showingMine ? 'Moje wydarzenia' : 'Wydarzenia' }}
-            </h1>
+            <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <h1 class="text-2xl font-semibold text-[#1b1b18] dark:text-[#EDEDEC] sm:text-3xl">
+                    {{ showingMine ? 'Moje wydarzenia' : 'Wydarzenia' }}
+                </h1>
+                <Link
+                    v-if="canCreate"
+                    :href="route('events.create')"
+                    class="inline-flex w-fit items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
+                >
+                    <Plus class="h-4 w-4" />
+                    Dodaj wydarzenie
+                </Link>
+            </div>
 
             <div class="mb-6 flex gap-2">
                 <button
