@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,6 +24,9 @@ class Registration extends Model
         'qr_code',
         'checked_in',
         'checked_in_at',
+        'reminder_24h_sent_at',
+        'reminder_1h_sent_at',
+        'feedback_reminder_sent_at',
     ];
 
     protected function casts(): array
@@ -31,6 +35,9 @@ class Registration extends Model
             'total_amount' => 'decimal:2',
             'checked_in' => 'boolean',
             'checked_in_at' => 'datetime',
+            'reminder_24h_sent_at' => 'datetime',
+            'reminder_1h_sent_at' => 'datetime',
+            'feedback_reminder_sent_at' => 'datetime',
         ];
     }
 
@@ -47,5 +54,18 @@ class Registration extends Model
     public function isPaid(): bool
     {
         return $this->payment_status === 'paid';
+    }
+
+    /** Rejestracje z opłaconą lub darmową biletem (do przypomnień). */
+    public function scopeEligibleForReminderEmails(Builder $query): Builder
+    {
+        return $query
+            ->whereHas('event', fn (Builder $q) => $q->where('status', 'published'))
+            ->where(function (Builder $q) {
+                $q->where('payment_status', 'paid')
+                    ->orWhereHas('event', fn (Builder $e) => $e->where(function (Builder $ev) {
+                        $ev->whereNull('ticket_price')->orWhere('ticket_price', '<=', 0);
+                    }));
+            });
     }
 }

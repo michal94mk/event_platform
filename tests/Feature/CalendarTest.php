@@ -141,10 +141,10 @@ class CalendarTest extends TestCase
             'start_date' => now()->addYears(3),
         ]);
 
-        $response = $this->get(route('events.calendar.feed'), [
+        $response = $this->get(route('events.calendar.feed', [
             'start' => now()->format('Y-m-d'),
             'end' => now()->addMonth()->format('Y-m-d'),
-        ]);
+        ]));
 
         $response->assertOk();
         $data = $response->json();
