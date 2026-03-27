@@ -118,12 +118,17 @@ class CalendarTest extends TestCase
 
     public function test_events_calendar_feed_returns_json(): void
     {
+        $start = now()->addDays(5);
         Event::factory()->published()->create([
             'title' => 'Feed Event',
-            'start_date' => now()->addDays(5),
+            'start_date' => $start,
+            'end_date' => $start->copy()->addHours(2),
         ]);
 
-        $response = $this->get(route('events.calendar.feed'));
+        $response = $this->get(route('events.calendar.feed', [
+            'start' => now()->startOfMonth()->format('Y-m-d'),
+            'end' => now()->endOfMonth()->addMonth()->format('Y-m-d'),
+        ]));
 
         $response->assertOk()
             ->assertJsonCount(1)
@@ -155,10 +160,18 @@ class CalendarTest extends TestCase
 
     public function test_events_calendar_feed_excludes_draft_for_guests(): void
     {
-        Event::factory()->published()->create(['title' => 'Published']);
+        $start = now()->addWeek();
+        Event::factory()->published()->create([
+            'title' => 'Published',
+            'start_date' => $start,
+            'end_date' => $start->copy()->addHours(2),
+        ]);
         Event::factory()->draft()->create(['title' => 'Draft']);
 
-        $response = $this->get(route('events.calendar.feed'));
+        $response = $this->get(route('events.calendar.feed', [
+            'start' => now()->format('Y-m-d'),
+            'end' => now()->addMonths(2)->format('Y-m-d'),
+        ]));
 
         $response->assertOk()
             ->assertJsonCount(1)

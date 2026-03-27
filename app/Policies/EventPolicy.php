@@ -50,4 +50,12 @@ class EventPolicy
     {
         return $event->user_id === $user->id || $user->isAdmin();
     }
+
+    /**
+     * Only owner or admin can view event statistics.
+     */
+    public function viewStats(User $user, Event $event): bool
+    {
+        return $event->user_id === $user->id || $user->isAdmin();
+    }
 }

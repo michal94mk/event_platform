@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use App\Models\EventCategory;
 use App\Models\Integration;
+use App\Models\Registration;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -241,6 +242,43 @@ class EventController extends Controller
             'registerDisabledReason' => $registerDisabledReason,
             'placesLeft' => $placesLeft,
             'isOrganizer' => $request->user() && ($event->user_id === $request->user()->id || $request->user()->isAdmin()),
+            'canViewStats' => $request->user() && $request->user()->can('viewStats', $event),
+        ]);
+    }
+
+    public function stats(Request $request, Event $event)
+    {
+        $this->authorize('viewStats', $event);
+
+        $base = Registration::query()->where('event_id', $event->id);
+
+        $registrationsCount = (clone $base)->count();
+        $ticketsTotal = (int) (clone $base)->sum('ticket_quantity');
+        $revenue = (float) (clone $base)->where('payment_status', 'paid')->sum('total_amount');
+        $checkedInCount = (clone $base)->where('checked_in', true)->count();
+        $pendingPaymentCount = (clone $base)->where('payment_status', 'pending')->count();
+        $refundedCount = (clone $base)->where('payment_status', 'refunded')->count();
+
+        $stats = [
+            'registrations_count' => $registrationsCount,
+            'tickets_total' => $ticketsTotal,
+            'revenue' => round($revenue, 2),
+            'currency' => $event->currency ?? 'PLN',
+            'checked_in_count' => $checkedInCount,
+            'not_checked_in_count' => max(0, $registrationsCount - $checkedInCount),
+            'pending_payment_count' => $pendingPaymentCount,
+            'refunded_count' => $refundedCount,
+            'max_attendees' => $event->max_attendees,
+        ];
+
+        return Inertia::render('events/Stats', [
+            'event' => [
+                'id' => $event->id,
+                'title' => $event->title,
+                'slug' => $event->slug,
+                'status' => $event->status,
+            ],
+            'stats' => $stats,
         ]);
     }
 

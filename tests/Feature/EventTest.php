@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Event;
 use App\Models\EventCategory;
+use App\Models\Registration;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -447,8 +448,61 @@ class EventTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
-    // Helpers
+    // Stats
     // -----------------------------------------------------------------------
+
+    public function test_organizer_can_view_event_stats(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $event = Event::factory()->published()->create(['user_id' => $organizer->id]);
+
+        Registration::factory()->count(2)->create([
+            'event_id' => $event->id,
+            'payment_status' => 'paid',
+            'total_amount' => 25,
+            'ticket_quantity' => 1,
+        ]);
+
+        $this->actingAs($organizer)
+            ->get(route('events.stats', $event->slug))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->component('events/Stats')
+                ->where('stats.registrations_count', 2)
+                ->where('stats.tickets_total', 2)
+                ->where('stats.revenue', 50)
+                ->where('stats.checked_in_count', 0)
+            );
+    }
+
+    public function test_admin_can_view_any_event_stats(): void
+    {
+        $admin = User::factory()->admin()->create();
+        $event = Event::factory()->published()->create();
+
+        $this->actingAs($admin)
+            ->get(route('events.stats', $event->slug))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('events/Stats'));
+    }
+
+    public function test_non_owner_cannot_view_event_stats(): void
+    {
+        $event = Event::factory()->published()->create();
+        $other = User::factory()->organizer()->create();
+
+        $this->actingAs($other)
+            ->get(route('events.stats', $event->slug))
+            ->assertForbidden();
+    }
+
+    public function test_guest_cannot_view_event_stats(): void
+    {
+        $event = Event::factory()->published()->create();
+
+        $this->get(route('events.stats', $event->slug))
+            ->assertRedirect(route('login'));
+    }
 
     private function validEventData(array $overrides = []): array
     {

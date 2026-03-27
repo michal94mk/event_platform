@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
-import { Calendar, LoaderCircle } from 'lucide-vue-next';
+import { BarChart3, Calendar, LoaderCircle } from 'lucide-vue-next';
 
 interface Category {
     id: number;
@@ -43,6 +43,7 @@ const props = defineProps<{
     registerDisabledReason?: string | null;
     placesLeft: number | null;
     isOrganizer: boolean;
+    canViewStats?: boolean;
 }>();
 
 const page = usePage();
@@ -201,6 +202,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 Dodaj do kalendarza
                             </Button>
                         </a>
+                        <Link v-if="canViewStats" :href="route('events.stats', event.slug)">
+                            <Button variant="outline" size="sm">
+                                <BarChart3 class="mr-2 h-4 w-4" />
+                                Statystyki
+                            </Button>
+                        </Link>
                         <Link v-if="isOrganizer" :href="route('events.check-in.page', event.slug)">
                             <Button variant="secondary" size="sm">Check-in uczestników</Button>
                         </Link>

@@ -31,6 +31,7 @@ Route::get('events/{event}/calendar.ics', [CalendarController::class, 'event'])-
 Route::post('events/{event}/register', [RegistrationController::class, 'store'])->name('events.register');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('events/{event}/stats', [EventController::class, 'stats'])->name('events.stats');
     Route::get('events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::put('events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
