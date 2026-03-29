@@ -428,6 +428,63 @@ class RegistrationTest extends TestCase
     }
 
     // -----------------------------------------------------------------------
+    // Refund (Stripe)
+    // -----------------------------------------------------------------------
+
+    public function test_check_in_page_marks_can_refund_when_paid_and_payment_intent_set(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $event = Event::factory()->published()->paid(10)->create(['user_id' => $organizer->id]);
+        Registration::factory()->create([
+            'event_id' => $event->id,
+            'payment_status' => 'paid',
+            'payment_intent_id' => 'pi_test_123',
+            'total_amount' => 10,
+        ]);
+
+        $this->actingAs($organizer)
+            ->get(route('events.check-in.page', $event->slug))
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page
+                ->has('registrations', 1)
+                ->where('registrations.0.can_refund', true)
+            );
+    }
+
+    public function test_organizer_refund_returns_error_when_stripe_not_configured(): void
+    {
+        $organizer = User::factory()->organizer()->create();
+        $event = Event::factory()->published()->paid(10)->create(['user_id' => $organizer->id]);
+        $registration = Registration::factory()->create([
+            'event_id' => $event->id,
+            'payment_status' => 'paid',
+            'payment_intent_id' => 'pi_test_123',
+            'total_amount' => 10,
+        ]);
+
+        $this->actingAs($organizer)
+            ->from(route('events.check-in.page', $event->slug))
+            ->post(route('registrations.refund', $registration->id))
+            ->assertRedirect(route('events.check-in.page', $event->slug))
+            ->assertSessionHasErrors('refund');
+    }
+
+    public function test_non_owner_cannot_refund_registration(): void
+    {
+        $event = Event::factory()->published()->paid(10)->create();
+        $registration = Registration::factory()->create([
+            'event_id' => $event->id,
+            'payment_status' => 'paid',
+            'payment_intent_id' => 'pi_test_123',
+        ]);
+        $other = User::factory()->organizer()->create();
+
+        $this->actingAs($other)
+            ->post(route('registrations.refund', $registration->id))
+            ->assertForbidden();
+    }
+
+    // -----------------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------------
 

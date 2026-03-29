@@ -133,7 +133,21 @@ class RegistrationController extends Controller
             abort(403);
         }
 
-        $registrations = $event->registrations()->orderBy('first_name')->orderBy('last_name')->get();
+        $registrations = $event->registrations()
+            ->orderBy('first_name')
+            ->orderBy('last_name')
+            ->get()
+            ->map(fn (Registration $r) => [
+                'id' => $r->id,
+                'first_name' => $r->first_name,
+                'last_name' => $r->last_name,
+                'email' => $r->email,
+                'ticket_quantity' => $r->ticket_quantity,
+                'checked_in' => $r->checked_in,
+                'checked_in_at' => $r->checked_in_at?->toIso8601String(),
+                'payment_status' => $r->payment_status,
+                'can_refund' => $r->payment_status === 'paid' && filled($r->payment_intent_id),
+            ]);
 
         return Inertia::render('events/CheckIn', [
             'event' => $event->only('id', 'title', 'slug'),
