@@ -29,6 +29,8 @@ interface Registration {
 const props = defineProps<{
     event: Event;
     registrations: Registration[];
+    canViewStats: boolean;
+    canUpdate: boolean;
 }>();
 
 const page = usePage();
@@ -82,6 +84,8 @@ function requestRefund(registrationId: number) {
                 <Link :href="route('home')" class="text-sm font-medium text-[#1b1b18] hover:underline dark:text-[#EDEDEC]"> Event Platform </Link>
                 <div class="flex flex-wrap gap-3 sm:gap-4">
                     <Link :href="route('events.show', event.slug)" class="text-sm hover:underline">Wydarzenie</Link>
+                    <Link v-if="canViewStats" :href="route('events.stats', event.slug)" class="text-sm hover:underline">Statystyki</Link>
+                    <Link v-if="canUpdate" :href="route('events.edit', event.slug)" class="text-sm hover:underline">Edytuj</Link>
                     <Link :href="route('events.index')" class="text-sm hover:underline">Wydarzenia</Link>
                     <Link :href="route('dashboard')" class="text-sm hover:underline">Dashboard</Link>
                 </div>

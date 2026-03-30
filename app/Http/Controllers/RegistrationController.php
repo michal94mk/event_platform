@@ -152,6 +152,8 @@ class RegistrationController extends Controller
         return Inertia::render('events/CheckIn', [
             'event' => $event->only('id', 'title', 'slug'),
             'registrations' => $registrations,
+            'canViewStats' => $request->user()->can('viewStats', $event),
+            'canUpdate' => $request->user()->can('update', $event),
         ]);
     }
 

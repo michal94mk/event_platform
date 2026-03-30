@@ -233,7 +233,11 @@ class RegistrationTest extends TestCase
         $this->actingAs($organizer)
             ->get(route('events.check-in.page', $event->slug))
             ->assertOk()
-            ->assertInertia(fn ($page) => $page->has('event')->has('registrations'));
+            ->assertInertia(fn ($page) => $page
+                ->has('event')
+                ->has('registrations')
+                ->where('canViewStats', true)
+                ->where('canUpdate', true));
     }
 
     public function test_admin_can_access_check_in_page_of_any_event(): void
